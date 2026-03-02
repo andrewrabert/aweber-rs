@@ -1,0 +1,22 @@
+[package]
+name = "aweber"
+version = "0.1.0"
+edition = "2021"
+description = "A CLI and library for the AWeber API"
+license = "MIT"
+repository = "https://github.com/andrewrabert/aweber-rs"
+homepage = "https://github.com/andrewrabert/aweber-rs"
+
+[dependencies]
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4", features = ["derive", "string", "env"] }
+reqwest = { version = "0.13", default-features = false, features = ["json", "query", "form", "native-tls"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1"
+open = "5"
+dirs = "6"
+sha2 = "0.10"
+base64 = "0.22"
+tokio = { version = "1", features = ["full"] }
+uuid = { version = "1.0", features = ["serde", "v4"] }
