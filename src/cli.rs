@@ -174,8 +174,8 @@ impl Cli {
             .arg (clap::Arg::new ("subscribed-at") . long ("subscribed-at") . value_parser (clap::value_parser! (chrono::NaiveDate)) . required (false) . help ("The day in which the subscriber subscribed"))
             .arg (clap::Arg::new ("subscribed-before") . long ("subscribed-before") . value_parser (clap::value_parser! (chrono::NaiveDate)) . required (false) . help ("The day on or before the subscriber subscribed"))
             .arg (clap::Arg::new ("subscription-method") . long ("subscription-method") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsFindsubscribersSubscriptionMethod :: Api . to_string () , types :: GetAccountsFindsubscribersSubscriptionMethod :: Email . to_string () , types :: GetAccountsFindsubscribersSubscriptionMethod :: Import . to_string () , types :: GetAccountsFindsubscribersSubscriptionMethod :: Webform . to_string () ,]) , | s | types :: GetAccountsFindsubscribersSubscriptionMethod :: try_from (s) . unwrap ())) . required (false) . help ("How the subscriber was subscribed"))
-            .arg (clap::Arg::new ("tags") . long ("tags") . value_parser (clap::value_parser! (String)) . required (false) . help ("A string containing a JSON-formatted array of tags. All tags must match for the subscriber to match."))
-            .arg (clap::Arg::new ("tags-not-in") . long ("tags-not-in") . value_parser (clap::value_parser! (String)) . required (false) . help ("A string containing a JSON-formatted array of tags. Checks that all tags are not matched to a subscriber."))
+            .arg (clap::Arg::new ("tags") . long ("tags") . value_parser (clap::value_parser! (String)) . required (false) . help ("A tag to match. All tags must match for the subscriber to match."))
+            .arg (clap::Arg::new ("tags-not-in") . long ("tags-not-in") . value_parser (clap::value_parser! (String)) . required (false) . help ("A tag to exclude. Checks that all tags are not matched to a subscriber."))
             .arg (clap::Arg::new ("unsubscribe-method") . long ("unsubscribe-method") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsFindsubscribersUnsubscribeMethod :: UnsubscribeLink . to_string () , types :: GetAccountsFindsubscribersUnsubscribeMethod :: CustomerCp . to_string () , types :: GetAccountsFindsubscribersUnsubscribeMethod :: Undeliverable . to_string () , types :: GetAccountsFindsubscribersUnsubscribeMethod :: ApiUnsubscribe . to_string () , types :: GetAccountsFindsubscribersUnsubscribeMethod :: ApiMove . to_string () ,]) , | s | types :: GetAccountsFindsubscribersUnsubscribeMethod :: try_from (s) . unwrap ())) . required (false) . help ("How the subscriber unsubscribed"))
             .arg (clap::Arg::new ("unsubscribed-after") . long ("unsubscribed-after") . value_parser (clap::value_parser! (chrono::NaiveDate)) . required (false) . help ("The day on or after the subscriber unsubscribed"))
             .arg (clap::Arg::new ("unsubscribed-at") . long ("unsubscribed-at") . value_parser (clap::value_parser! (chrono::NaiveDate)) . required (false) . help ("The day in which the subscriber unsubscribed"))
@@ -571,8 +571,8 @@ impl Cli {
             .arg (clap::Arg::new ("subscribed-at") . long ("subscribed-at") . value_parser (clap::value_parser! (chrono::NaiveDate)) . required (false) . help ("The day in which the subscriber subscribed"))
             .arg (clap::Arg::new ("subscribed-before") . long ("subscribed-before") . value_parser (clap::value_parser! (chrono::NaiveDate)) . required (false) . help ("The day on or before the subscriber subscribed"))
             .arg (clap::Arg::new ("subscription-method") . long ("subscription-method") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsSubscribersFindSubscriptionMethod :: Api . to_string () , types :: GetAccountsListsSubscribersFindSubscriptionMethod :: Email . to_string () , types :: GetAccountsListsSubscribersFindSubscriptionMethod :: Import . to_string () , types :: GetAccountsListsSubscribersFindSubscriptionMethod :: Webform . to_string () ,]) , | s | types :: GetAccountsListsSubscribersFindSubscriptionMethod :: try_from (s) . unwrap ())) . required (false) . help ("How the subscriber was subscribed"))
-            .arg (clap::Arg::new ("tags") . long ("tags") . value_parser (clap::value_parser! (String)) . required (false) . help ("A string containing a JSON-formatted array of tags. All tags must match for the subscriber to match."))
-            .arg (clap::Arg::new ("tags-not-in") . long ("tags-not-in") . value_parser (clap::value_parser! (String)) . required (false) . help ("A string containing a JSON-formatted array of tags. Checks that all tags are not matched to a subscriber."))
+            .arg (clap::Arg::new ("tags") . long ("tags") . value_parser (clap::value_parser! (String)) . required (false) . help ("A tag to match. All tags must match for the subscriber to match."))
+            .arg (clap::Arg::new ("tags-not-in") . long ("tags-not-in") . value_parser (clap::value_parser! (String)) . required (false) . help ("A tag to exclude. Checks that all tags are not matched to a subscriber."))
             .arg (clap::Arg::new ("unsubscribe-method") . long ("unsubscribe-method") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsSubscribersFindUnsubscribeMethod :: UnsubscribeLink . to_string () , types :: GetAccountsListsSubscribersFindUnsubscribeMethod :: CustomerCp . to_string () , types :: GetAccountsListsSubscribersFindUnsubscribeMethod :: Undeliverable . to_string () , types :: GetAccountsListsSubscribersFindUnsubscribeMethod :: ApiUnsubscribe . to_string () , types :: GetAccountsListsSubscribersFindUnsubscribeMethod :: ApiMove . to_string () ,]) , | s | types :: GetAccountsListsSubscribersFindUnsubscribeMethod :: try_from (s) . unwrap ())) . required (false) . help ("How the subscriber unsubscribed"))
             .arg (clap::Arg::new ("unsubscribed-after") . long ("unsubscribed-after") . value_parser (clap::value_parser! (chrono::NaiveDate)) . required (false) . help ("The day on or after the subscriber unsubscribed"))
             .arg (clap::Arg::new ("unsubscribed-at") . long ("unsubscribed-at") . value_parser (clap::value_parser! (chrono::NaiveDate)) . required (false) . help ("The day in which the subscriber unsubscribed"))
@@ -1046,6 +1046,8 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
+        let tags = matches.get_one::<String>("tags").map(|s| serde_json::to_string(&[s]).unwrap());
+        let tags_not_in = matches.get_one::<String>("tags-not-in").map(|s| serde_json::to_string(&[s]).unwrap());
         let result = crate::endpoints::find_account_subscribers(
             &self.client,
             self.account_id,
@@ -1069,8 +1071,8 @@ impl Cli {
             matches.get_one::<chrono::NaiveDate>("subscribed-at").copied(),
             matches.get_one::<chrono::NaiveDate>("subscribed-before").copied(),
             matches.get_one::<types::GetAccountsFindsubscribersSubscriptionMethod>("subscription-method"),
-            matches.get_one::<String>("tags").map(|s| s.as_str()),
-            matches.get_one::<String>("tags-not-in").map(|s| s.as_str()),
+            tags.as_deref(),
+            tags_not_in.as_deref(),
             matches.get_one::<types::GetAccountsFindsubscribersUnsubscribeMethod>("unsubscribe-method"),
             matches.get_one::<chrono::NaiveDate>("unsubscribed-after").copied(),
             matches.get_one::<chrono::NaiveDate>("unsubscribed-at").copied(),
@@ -1825,6 +1827,8 @@ impl Cli {
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
         let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let tags = matches.get_one::<String>("tags").map(|s| serde_json::to_string(&[s]).unwrap());
+        let tags_not_in = matches.get_one::<String>("tags-not-in").map(|s| serde_json::to_string(&[s]).unwrap());
         let result = crate::endpoints::find_subscribers(
             &self.client,
             self.account_id,
@@ -1851,8 +1855,8 @@ impl Cli {
             matches.get_one::<chrono::NaiveDate>("subscribed-at").copied(),
             matches.get_one::<chrono::NaiveDate>("subscribed-before").copied(),
             matches.get_one::<types::GetAccountsListsSubscribersFindSubscriptionMethod>("subscription-method"),
-            matches.get_one::<String>("tags").map(|s| s.as_str()),
-            matches.get_one::<String>("tags-not-in").map(|s| s.as_str()),
+            tags.as_deref(),
+            tags_not_in.as_deref(),
             matches.get_one::<types::GetAccountsListsSubscribersFindUnsubscribeMethod>("unsubscribe-method"),
             matches.get_one::<chrono::NaiveDate>("unsubscribed-after").copied(),
             matches.get_one::<chrono::NaiveDate>("unsubscribed-at").copied(),
