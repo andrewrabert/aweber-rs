@@ -332,6 +332,14 @@ pub fn build_command_tree() -> clap::Command {
                 .env("AWEBER_TOKEN")
                 .help("OAuth2 access token (overrides stored credentials)"),
         )
+        .arg(
+            clap::Arg::new("verbose")
+                .short('v')
+                .long("verbose")
+                .action(clap::ArgAction::SetTrue)
+                .global(true)
+                .help("Print request URLs to stderr"),
+        )
         .subcommand_required(true)
         .subcommand(auth_cmd);
 

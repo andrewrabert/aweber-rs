@@ -4,6 +4,7 @@ use std::fmt;
 pub struct Client {
     pub(crate) baseurl: String,
     pub(crate) client: reqwest::Client,
+    pub(crate) verbose: bool,
 }
 
 impl Client {
@@ -20,7 +21,13 @@ impl Client {
         Self {
             baseurl: baseurl.to_string(),
             client,
+            verbose: false,
         }
+    }
+
+    pub fn with_verbose(mut self, verbose: bool) -> Self {
+        self.verbose = verbose;
+        self
     }
 }
 
@@ -129,6 +136,14 @@ impl<'a> ApiRequest<'a> {
 
     fn build_request(self) -> reqwest::RequestBuilder {
         let url = format!("{}{}", self.client.baseurl, self.path);
+        if self.client.verbose {
+            if self.query.is_empty() {
+                eprintln!("{} {url}", self.method);
+            } else {
+                let qs: Vec<_> = self.query.iter().map(|(k, v)| format!("{k}={v}")).collect();
+                eprintln!("{} {url}?{}", self.method, qs.join("&"));
+            }
+        }
         let mut req = self.client.client.request(self.method, &url);
         req = req.header(reqwest::header::ACCEPT, "application/json");
         for (k, v) in &self.query {
@@ -167,6 +182,29 @@ impl<'a> ApiRequest<'a> {
         let status = response.status().as_u16();
         if (200..300).contains(&status) {
             Ok(())
+        } else {
+            let body = response.text().await.unwrap_or_default();
+            Err(ApiError::Http { status, body })
+        }
+    }
+}
+
+impl Client {
+    /// GET an absolute URL and deserialize the response.
+    pub async fn get_url<T: serde::de::DeserializeOwned>(&self, url: &str) -> Result<T, ApiError> {
+        if self.verbose {
+            eprintln!("GET {url}");
+        }
+        let response = self
+            .client
+            .get(url)
+            .header(reqwest::header::ACCEPT, "application/json")
+            .send()
+            .await?;
+        let status = response.status().as_u16();
+        if (200..300).contains(&status) {
+            let body = response.text().await?;
+            serde_json::from_str(&body).map_err(|e| ApiError::Deserialize { source: e, body })
         } else {
             let body = response.text().await.unwrap_or_default();
             Err(ApiError::Http { status, body })

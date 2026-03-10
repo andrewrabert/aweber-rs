@@ -134,10 +134,18 @@ impl Cli {
     // cli_* static methods (clap command definitions) - copied exactly from
     // generated_cli.rs
     // -----------------------------------------------------------------------
+    fn limit_arg() -> clap::Arg {
+        clap::Arg::new("limit")
+            .long("limit")
+            .value_parser(clap::value_parser!(usize))
+            .help("Maximum total number of entries to output")
+    }
+
     pub fn cli_list_accounts() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get accounts")
     }
     pub fn cli_get_account() -> clap::Command {
@@ -177,6 +185,7 @@ impl Cli {
             .arg (clap::Arg::new ("ws-show") . long ("ws-show") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsFindsubscribersWsShow :: TotalSize . to_string () ,]) , | s | types :: GetAccountsFindsubscribersWsShow :: try_from (s) . unwrap ())) . required (false) . help ("A flag to show the total size only - expecting \\\"total_size\\\", when added the response will be an integer"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Find subscribers for account")
     }
     pub fn cli_list_account_webform_split_tests() -> clap::Command {
@@ -184,6 +193,7 @@ impl Cli {
             .arg (clap::Arg::new ("ws-op") . long ("ws-op") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsGetwebformsplittestsWsOp :: GetWebFormSplitTests . to_string () ,]) , | s | types :: GetAccountsGetwebformsplittestsWsOp :: try_from (s) . unwrap ())) . required (false))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get split tests for account")
     }
     pub fn cli_list_account_webforms() -> clap::Command {
@@ -191,12 +201,14 @@ impl Cli {
             .arg (clap::Arg::new ("ws-op") . long ("ws-op") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsGetwebformsWsOp :: GetWebForms . to_string () ,]) , | s | types :: GetAccountsGetwebformsWsOp :: try_from (s) . unwrap ())) . required (false))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get webforms for account")
     }
     pub fn cli_list_integrations() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get integrations")
     }
     pub fn cli_get_integration() -> clap::Command {
@@ -208,6 +220,7 @@ impl Cli {
         clap::Command::new ("")
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get lists")
     }
     pub fn cli_find_lists() -> clap::Command {
@@ -230,6 +243,7 @@ impl Cli {
             .arg (clap::Arg::new ("status") . long ("status") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsBroadcastsStatus :: Draft . to_string () , types :: GetAccountsListsBroadcastsStatus :: Scheduled . to_string () , types :: GetAccountsListsBroadcastsStatus :: Sent . to_string () ,]) , | s | types :: GetAccountsListsBroadcastsStatus :: try_from (s) . unwrap ())) . required (false) . help ("The status of the broadcasts to retrieve. **(Please be aware that `draft` only returns API created Broadcast drafts)**"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get broadcasts")
     }
     pub fn cli_create_broadcast() -> clap::Command {
@@ -300,6 +314,7 @@ impl Cli {
             .arg (clap::Arg::new ("detailed") . long ("detailed") . value_parser (clap::value_parser! (bool)) . required (false) . help ("When true, returns individual click events with URLs instead of aggregated click data per subscriber"))
             .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
             .arg (clap::Arg::new ("page-size") . long ("page-size") . value_parser (clap::value_parser! (std::num::NonZeroU64)) . required (false) . help ("The pagination total entries to retrieve"))
+            .arg(Self::limit_arg())
             .about ("Get broadcast clicks")
     }
     pub fn cli_get_broadcast_opens() -> clap::Command {
@@ -309,6 +324,7 @@ impl Cli {
             .arg (clap::Arg::new ("broadcast-id") . long ("broadcast-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The broadcast ID"))
             .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
             .arg (clap::Arg::new ("page-size") . long ("page-size") . value_parser (clap::value_parser! (std::num::NonZeroU64)) . required (false) . help ("The pagination total entries to retrieve"))
+            .arg(Self::limit_arg())
             .about ("Get broadcast opens")
     }
     pub fn cli_schedule_broadcast() -> clap::Command {
@@ -324,6 +340,7 @@ impl Cli {
             .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get campaigns")
     }
     pub fn cli_list_campaign_stats() -> clap::Command {
@@ -332,6 +349,7 @@ impl Cli {
             .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get broadcast statistics")
     }
     pub fn cli_get_campaign_stat() -> clap::Command {
@@ -349,6 +367,7 @@ impl Cli {
             .arg (clap::Arg::new ("ws-show") . long ("ws-show") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsCampaignsFindWsShow :: TotalSize . to_string () ,]) , | s | types :: GetAccountsListsCampaignsFindWsShow :: try_from (s) . unwrap ())) . required (false) . help ("A flag to show the total size only - expecting \\\"total_size\\\", when added the response will be an integer"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Find campaigns")
     }
     pub fn cli_get_campaign() -> clap::Command {
@@ -363,6 +382,7 @@ impl Cli {
             .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get custom fields")
     }
     pub fn cli_create_custom_field() -> clap::Command {
@@ -417,6 +437,7 @@ impl Cli {
                     .required(false)
                     .help("The pagination starting offset"),
             )
+            .arg(Self::limit_arg())
             .about("Get landing pages")
     }
     pub fn cli_get_landing_page() -> clap::Command {
@@ -466,6 +487,7 @@ impl Cli {
                     .required(false)
                     .help("The pagination starting offset"),
             )
+            .arg(Self::limit_arg())
             .about("Get segments")
     }
     pub fn cli_get_segment() -> clap::Command {
@@ -492,6 +514,7 @@ impl Cli {
             .arg (clap::Arg::new ("sort-order") . long ("sort-order") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsSubscribersSortOrder :: Asc . to_string () , types :: GetAccountsListsSubscribersSortOrder :: Desc . to_string () ,]) , | s | types :: GetAccountsListsSubscribersSortOrder :: try_from (s) . unwrap ())) . required (false) . help ("The collection will be sorted by the order in which the subscribers were added to the list. To specify the order, use the value `asc` for ascending or `desc` for descending."))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get subscribers")
     }
     pub fn cli_create_subscriber() -> clap::Command {
@@ -564,6 +587,7 @@ impl Cli {
             .arg (clap::Arg::new ("ws-show") . long ("ws-show") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsSubscribersFindWsShow :: TotalSize . to_string () ,]) , | s | types :: GetAccountsListsSubscribersFindWsShow :: try_from (s) . unwrap ())) . required (false) . help ("A flag to show the total size only - expecting \\\"total_size\\\", when added the response will be an integer"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Find subscribers for list")
     }
     pub fn cli_get_subscriber() -> clap::Command {
@@ -610,6 +634,7 @@ impl Cli {
             .arg (clap::Arg::new ("ws-op") . long ("ws-op") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsSubscribersGetactivityWsOp :: GetActivity . to_string () ,]) , | s | types :: GetAccountsListsSubscribersGetactivityWsOp :: try_from (s) . unwrap ())) . required (false))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get subscriber activity")
     }
     pub fn cli_list_tags() -> clap::Command {
@@ -622,6 +647,7 @@ impl Cli {
             .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get split tests for list")
     }
     pub fn cli_get_web_form_split_test() -> clap::Command {
@@ -636,6 +662,7 @@ impl Cli {
             .arg (clap::Arg::new ("split-test-id") . long ("split-test-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The webform split test ID"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get split test components")
     }
     pub fn cli_get_web_form_split_test_component() -> clap::Command {
@@ -650,6 +677,7 @@ impl Cli {
             .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
+            .arg(Self::limit_arg())
             .about ("Get webforms for list")
     }
     pub fn cli_get_web_form() -> clap::Command {
@@ -1012,7 +1040,7 @@ impl Cli {
         let ws_size = matches.get_one::<std::num::NonZeroU32>("ws-size").copied();
         let ws_start = matches.get_one::<i32>("ws-start").copied();
         let result = crate::endpoints::get_accounts(&self.client, ws_size, ws_start).await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_get_account(&self, _matches: &clap::ArgMatches) -> anyhow::Result<()> {
@@ -1061,7 +1089,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_list_account_webform_split_tests(
@@ -1076,7 +1104,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_list_account_webforms(
@@ -1091,7 +1119,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_list_integrations(
@@ -1105,7 +1133,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_get_integration(
@@ -1133,7 +1161,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_find_lists(
@@ -1176,7 +1204,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
     pub async fn execute_create_broadcast(
         &self,
@@ -1331,7 +1359,7 @@ impl Cli {
             matches.get_one::<std::num::NonZeroU64>("page-size").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_get_broadcast_opens(
@@ -1350,7 +1378,7 @@ impl Cli {
             matches.get_one::<std::num::NonZeroU64>("page-size").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_schedule_broadcast(
@@ -1394,7 +1422,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_list_campaign_stats(
@@ -1412,7 +1440,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_get_campaign_stat(
@@ -1474,7 +1502,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_get_campaign(
@@ -1512,7 +1540,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_create_custom_field(
@@ -1615,7 +1643,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_get_landing_page(
@@ -1683,7 +1711,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_get_segment(
@@ -1716,7 +1744,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_create_subscriber(
@@ -1848,7 +1876,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_get_subscriber(
@@ -1961,7 +1989,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_list_tags(
@@ -1991,7 +2019,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_get_web_form_split_test(
@@ -2025,7 +2053,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_get_web_form_split_test_component(
@@ -2063,7 +2091,7 @@ impl Cli {
             matches.get_one::<i32>("ws-start").copied(),
         )
         .await;
-        self.print_result(result)
+        self.print_paginated_ndjson(result, matches).await
     }
 
     pub async fn execute_get_web_form(
@@ -2217,6 +2245,58 @@ impl Cli {
                 Err(anyhow::anyhow!("{e}"))
             }
         }
+    }
+
+    async fn print_paginated_ndjson<C>(
+        &self,
+        first_page: Result<C, crate::client::ApiError>,
+        matches: &clap::ArgMatches,
+    ) -> anyhow::Result<()>
+    where
+        C: types::PaginatedCollection + serde::de::DeserializeOwned,
+        C::Item: serde::Serialize,
+    {
+        use std::io::Write;
+        let mut page = match first_page {
+            Ok(p) => p,
+            Err(e) => {
+                eprintln!("Error: {e}");
+                return Err(anyhow::anyhow!("{e}"));
+            }
+        };
+        let stdout = std::io::stdout();
+        let mut out = std::io::BufWriter::new(stdout.lock());
+        let mut remaining = matches.get_one::<usize>("limit").copied();
+        loop {
+            for item in page.take_entries() {
+                if remaining == Some(0) {
+                    out.flush()?;
+                    eprintln!("Warning: results truncated by --limit; more results available");
+                    return Ok(());
+                }
+                serde_json::to_writer(&mut out, &item)?;
+                writeln!(out)?;
+                if let Some(r) = &mut remaining {
+                    *r -= 1;
+                }
+            }
+            out.flush()?;
+            match page.next_collection_link() {
+                Some(_) if remaining == Some(0) => {
+                    eprintln!("Warning: results truncated by --limit; more results available");
+                    break;
+                }
+                Some(url) => {
+                    let url = url.to_string();
+                    page = self.client.get_url(&url).await.map_err(|e| {
+                        eprintln!("Error fetching next page: {e}");
+                        anyhow::anyhow!("{e}")
+                    })?;
+                }
+                None => break,
+            }
+        }
+        Ok(())
     }
 
     fn print_void(

@@ -2447,3 +2447,40 @@ mod flexible_datetime {
         }
     }
 }
+
+pub trait PaginatedCollection {
+    type Item: serde::Serialize;
+    fn take_entries(&mut self) -> Vec<Self::Item>;
+    fn next_collection_link(&self) -> Option<&str>;
+}
+
+macro_rules! impl_paginated_collection {
+    ($collection:ty, $item:ty) => {
+        impl PaginatedCollection for $collection {
+            type Item = $item;
+            fn take_entries(&mut self) -> Vec<$item> { std::mem::take(&mut self.entries) }
+            fn next_collection_link(&self) -> Option<&str> { self.next_collection_link.as_deref() }
+        }
+    };
+}
+
+impl_paginated_collection!(Accounts, Account);
+impl_paginated_collection!(BroadcastClicks, BroadcastClicksEntriesItem);
+impl_paginated_collection!(BroadcastClicksDetailed, BroadcastClicksDetailedEntriesItem);
+impl_paginated_collection!(BroadcastOpens, BroadcastOpensEntriesItem);
+impl_paginated_collection!(Broadcasts, BroadcastsEntriesItem);
+impl_paginated_collection!(CustomFields, CustomField);
+impl_paginated_collection!(FindCampaigns, Campaign);
+impl_paginated_collection!(FindSubscribers, SubscriberFind);
+impl_paginated_collection!(FindSubscribersAccount, SubscriberFind);
+impl_paginated_collection!(Integrations, Integration);
+impl_paginated_collection!(LandingPages, LandingPageNoContent);
+impl_paginated_collection!(ListCampaigns, Campaign);
+impl_paginated_collection!(Lists, List);
+impl_paginated_collection!(Segments, Segment);
+impl_paginated_collection!(Stats, Stat);
+impl_paginated_collection!(SubscriberGetActivity, Activity);
+impl_paginated_collection!(Subscribers, Subscriber);
+impl_paginated_collection!(WebFormSplitTests, WebformSplitTest);
+impl_paginated_collection!(WebformSplitTestComponents, WebformSplitTestComponent);
+impl_paginated_collection!(Webforms, Webform);

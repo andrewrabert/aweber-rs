@@ -72,6 +72,8 @@ async fn main() -> anyhow::Result<()> {
             .build()?,
     );
 
+    let verbose = matches.get_flag("verbose");
+    let client = client.with_verbose(verbose);
     let cli = aweber::cli::Cli::new(client, account_id);
 
     let (group_name, group_matches) = matches.subcommand().expect("subcommand is required");
