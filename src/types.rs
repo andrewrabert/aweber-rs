@@ -238,16 +238,16 @@ pub struct Account {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<i64>,
     #[doc = "The link to the [3rd party service Integrations](#tag/Integrations/paths/~1accounts~1{accountId}~1integrations/get)"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub integrations_collection_link: Option<String>,
     #[doc = "The link to the [Lists for the account](#tag/Lists/paths/~1accounts~1{accountId}~1lists/get)"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub lists_collection_link: Option<String>,
     #[doc = "The link to the account type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to the account resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The UUID (universally unique identifier) for the account"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -260,13 +260,13 @@ pub struct Accounts {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<Account>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -285,13 +285,13 @@ pub struct Activity {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<i64>,
     #[doc = "The link to the event type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to the event resource (may be null)"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The link to the [Subscriber](#tag/Subscribers/paths/~1accounts~1{accountId}~1lists~1{listId}~1subscribers~1{subscriberId}/get) resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub subscriber_link: Option<String>,
     #[doc = "The type of activity"]
     #[serde(
@@ -394,7 +394,7 @@ pub struct Broadcast {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub click_tracking_enabled: Option<bool>,
     #[doc = "The link to this broadcasts clicks collection."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub clicks_collection_link: Option<String>,
     #[doc = "When the message was created."]
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
@@ -421,19 +421,19 @@ pub struct Broadcast {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub notify_on_send: Option<bool>,
     #[doc = "The link to this broadcasts opens collection."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub opens_collection_link: Option<String>,
     #[doc = "When broadcast is scheduled to send."]
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
     pub scheduled_for: Option<::chrono::DateTime<::chrono::offset::Utc>>,
     #[doc = "URL to the [Segment](#tag/Segments) to send this broadcast to."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub segment_link: Option<::serde_json::Value>,
     #[doc = "The name of the segment the broadcast will be sent to, or Unknown if the segment no longer exists."]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub segment_name: Option<String>,
     #[doc = "The link to this resource."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "Date/Time broadcast was sent."]
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
@@ -461,13 +461,13 @@ pub struct BroadcastClicks {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<BroadcastClicksEntriesItem>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The total number of unique subscribers who clicked the broadcast"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -480,13 +480,13 @@ pub struct BroadcastClicksDetailed {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<BroadcastClicksDetailedEntriesItem>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The total number of individual click events (can be higher than unique subscribers if some clicked multiple times)"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -505,10 +505,10 @@ pub struct BroadcastClicksDetailedEntriesItem {
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
     pub event_time: Option<::chrono::DateTime<::chrono::offset::Utc>>,
     #[doc = "A link to the click type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to the subscriber entry"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub subscriber_link: Option<String>,
     #[doc = "Type of subscriber activity"]
     #[serde(
@@ -538,10 +538,10 @@ pub struct BroadcastClicksEntriesItem {
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
     pub last_click_at: Option<::chrono::DateTime<::chrono::offset::Utc>>,
     #[doc = "A link to the click type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to the subscriber entry"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub subscriber_link: Option<String>,
     #[doc = "Total number of clicks by this subscriber"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -572,13 +572,13 @@ pub struct BroadcastOpens {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<BroadcastOpensEntriesItem>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The total number of entries"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -594,10 +594,10 @@ pub struct BroadcastOpensEntriesItem {
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
     pub event_time: Option<::chrono::DateTime<::chrono::offset::Utc>>,
     #[doc = "A link to the open type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to the subscriber entry"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub subscriber_link: Option<String>,
     #[doc = "Type of subscriber activity"]
     #[serde(
@@ -616,22 +616,22 @@ pub struct Broadcasts {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<BroadcastsEntriesItem>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if previous entries exist. This attribute is omitted if this is the first page."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "A link to the current page of entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve."]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub start: Option<u64>,
     #[doc = "A link to a resource that provides the total number of broadcasts in the collection."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub total_size_link: Option<String>,
 }
 #[doc = "`BroadcastsEntriesItem`"]
@@ -644,7 +644,7 @@ pub struct BroadcastsEntriesItem {
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
     pub scheduled_for: Option<::chrono::DateTime<::chrono::offset::Utc>>,
     #[doc = "The link to this resource."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "Date/Time broadcast was sent."]
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
@@ -679,7 +679,7 @@ pub struct Campaign {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub is_archived: Option<bool>,
     #[doc = "A URL to retrieve the [Links](#tag/Campaigns/paths/~1accounts~1{accountId}~1lists~1{listId}~1campaigns~1{campaignType}{campaignId}~1links/get) for this campaign"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub links_collection_link: Option<String>,
     #[doc = "Message interval (followup only)"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -688,13 +688,13 @@ pub struct Campaign {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub message_number: Option<::std::num::NonZeroU64>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "When broadcast is scheduled to send (broadcast only)"]
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
     pub scheduled_at: Option<::chrono::DateTime<::chrono::offset::Utc>>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "Date/Time campaign was sent (broadcast only)"]
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
@@ -702,7 +702,7 @@ pub struct Campaign {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub spam_assassin_score: Option<f32>,
     #[doc = "A link to the [statistics collection](#tag/Campaigns/paths/~1accounts~1{accountId}~1lists~1{listId}~1campaigns~1b{campaignId}~1stats/get) for this campaign"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub stats_collection_link: Option<String>,
     #[doc = "Subject of message"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -726,7 +726,7 @@ pub struct Campaign {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub total_unsubscribes: Option<i64>,
     #[doc = "Twitter account where broadcast was tweeted (broadcasts only). Links to [Integration](#tag/Integrations/paths/~1accounts~1{accountId}~1integrations~1{integrationId}/get)."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub twitter_account_link: Option<String>,
 }
 string_enum! { pub enum CampaignCampaignType { B => "b", F => "f" } }
@@ -799,10 +799,10 @@ pub struct CustomField {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[doc = "The link to the custom field type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to the event resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
 }
 #[doc = "`CustomFields`"]
@@ -812,13 +812,13 @@ pub struct CustomFields {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<CustomField>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -896,16 +896,16 @@ pub struct FindCampaigns {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<Campaign>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub start: Option<u64>,
     #[doc = "Link to the total number of entries"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub total_size_link: Option<String>,
 }
 #[doc = "`FindLists`"]
@@ -918,7 +918,7 @@ pub struct FindLists {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub start: Option<u64>,
     #[doc = "A link to check the total number of entries found for this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub total_size_link: Option<String>,
 }
 #[doc = "`FindSubscribers`"]
@@ -928,16 +928,16 @@ pub struct FindSubscribers {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<SubscriberFind>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if previous entries exist. This attribute is omitted if this is the first page."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub start: Option<u64>,
     #[doc = "Link to the total number of entries"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub total_size_link: Option<String>,
 }
 #[doc = "`FindSubscribersAccount`"]
@@ -947,22 +947,22 @@ pub struct FindSubscribersAccount {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<SubscriberFind>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if previous entries exist. This attribute is omitted if this is the first page."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "A link to the current page of entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub start: Option<u64>,
     #[doc = "Link to the total number of entries"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub total_size_link: Option<String>,
 }
 #[doc = "`Form`"]
@@ -1069,7 +1069,7 @@ pub struct GetAccountsListsSubscribers2Response {
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
     pub last_followup_sent_at: Option<::chrono::DateTime<::chrono::offset::Utc>>,
     #[doc = "A link to the [Last Follow Up Message](#tag/Campaigns/paths/~1accounts~1{accountId}~1lists~1{listId}~1campaigns~1{campaignType}{campaignId}/get) the subscriber was sent"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub last_followup_sent_link: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub latitude: Option<f64>,
@@ -1088,11 +1088,11 @@ pub struct GetAccountsListsSubscribers2Response {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub region: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link:
         Option<GetAccountsListsSubscribers2ResponseResourceTypeLink>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The subscriber's status"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1176,10 +1176,10 @@ pub struct Integration {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub login: Option<String>,
     #[doc = "The link to the integration type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The integration name"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1192,13 +1192,13 @@ pub struct Integrations {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<Integration>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1235,10 +1235,10 @@ pub struct LandingPage {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub published_url: Option<String>,
     #[doc = "The link to the landing page type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The status of the landing page"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1266,10 +1266,10 @@ pub struct LandingPageNoContent {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub published_url: Option<String>,
     #[doc = "The link to the landing page type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The status of the landing page"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1283,13 +1283,13 @@ pub struct LandingPages {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<LandingPageNoContent>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "The link to the landing page page type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1302,13 +1302,13 @@ pub struct LandingPages {
 #[derive(serde::Deserialize, serde::Serialize, Clone, Debug, Default)]
 pub struct List {
     #[doc = "[E-Mail Campaigns](#tag/Campaigns/paths/~1accounts~1{accountId}~1lists~1{listId}~1campaigns/get) used by this list"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub campaigns_collection_link: Option<String>,
     #[doc = "Subscriber [Custom Fields](#tag/Custom-Fields/paths/~1accounts~1{accountId}~1lists~1{listId}~1custom_fields/get) defined for this list"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub custom_fields_collection_link: Option<String>,
     #[doc = "Draft [Broadcasts](#tag/Broadcasts/paths/~1accounts~1{accountId}~1lists~1{listId}~1broadcasts/get) belonging to this list"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub draft_broadcasts_link: Option<String>,
     #[doc = "The ETag HTTP header"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1317,28 +1317,28 @@ pub struct List {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<i64>,
     #[doc = "Link to the [Landing Pages](#tag/Landing-Pages/paths/~1accounts~1{accountId}~1lists~1{listId}~1landing_pages/get) used by this list"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub landing_pages_collection_link: Option<String>,
     #[doc = "The name of the list.  This name may be changed by the customer at any time."]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<ListName>,
     #[doc = "The link to the list type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "Scheduled [Broadcasts](#tag/Broadcasts/paths/~1accounts~1{accountId}~1lists~1{listId}~1broadcasts/get) belonging to this list"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub scheduled_broadcasts_link: Option<String>,
     #[doc = "Link to the Subscriber [Segments](#tag/Segments/paths/~1accounts~1{accountId}~1lists~1{listId}~1segments/get) used by this list"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub segments_collection_link: Option<String>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "Sent [Broadcasts](#tag/Broadcasts/paths/~1accounts~1{accountId}~1lists~1{listId}~1broadcasts/get) belonging to this list"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub sent_broadcasts_link: Option<String>,
     #[doc = "Link to the [Subscribers](#tag/Subscribers/paths/~1accounts~1{accountId}~1lists~1{listId}~1subscribers/get) belonging to this list"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub subscribers_collection_link: Option<String>,
     #[doc = "Number of subscribers where status = subscribed"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1368,10 +1368,10 @@ pub struct List {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub vapid_public_key: Option<String>,
     #[doc = "[Webform Split Tests](#tag/Webforms/paths/~1accounts~1{accountId}~1lists~1{listId}~1web_form_split_tests/get) defined for this list"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub web_form_split_tests_collection_link: Option<String>,
     #[doc = "[Webforms](#tag/Webforms/paths/~1accounts~1{accountId}~1lists~1{listId}~1web_forms/get) defined for this list."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub web_forms_collection_link: Option<String>,
 }
 #[doc = "`ListCampaigns`"]
@@ -1381,10 +1381,10 @@ pub struct ListCampaigns {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<Campaign>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1402,13 +1402,13 @@ pub struct Lists {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<List>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1469,14 +1469,14 @@ string_enum! { pub enum PkceGrantType { AuthorizationCode => "authorization_code
 #[derive(serde::Deserialize, serde::Serialize, Clone, Debug, Default)]
 pub struct PostAccountsListsBroadcastsCancelResponse {
     #[doc = "The link to this resource."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
 }
 #[doc = "`PostAccountsListsBroadcastsScheduleResponse`"]
 #[derive(serde::Deserialize, serde::Serialize, Clone, Debug, Default)]
 pub struct PostAccountsListsBroadcastsScheduleResponse {
     #[doc = "The link to the broadcast resource."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
 }
 #[doc = "`PostAccountsListsCustomFieldsBody`"]
@@ -1715,10 +1715,10 @@ pub struct Segment {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[doc = "The link to the segment type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
 }
 #[doc = "`Segments`"]
@@ -1727,13 +1727,13 @@ pub struct Segments {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<Segment>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "The link to the segment page type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1752,10 +1752,10 @@ pub struct Stat {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
     #[doc = "A link that identifies the type of resource that this represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<StatResourceTypeLink>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The statistic's value\n\nThe datatype of the value attribute may be different for each Stat.\nStats can be integer_stat, decimal_stat, or list_stat. Evaluate the\nresource_type_link attribute if you must programmatically handle\ndifferent datatypes in a special way.\n\nBelow is a list of the statistics ID and return type\n\n>\n> __Aggregate Statistics__\n>\n> * total_clicks - integer_stat\n> * unique_clicks - integer_stat\n> * total_opens - integer_stat\n> * unique_opens - integer_stat\n> * total_sales - integer_stat\n> * total_sales_dollars - decimal_stat\n> * total_unsubscribed - integer_stat\n\n> __Time Related Statistics__\n>\n> * hourly_opens - list_stat\n> * hourly_clicks - list_stat\n> * hourly_webhits - list_stat\n> * hourly_sales - list_stat\n> * hourly_unsubscribes - list_stat\n> * daily_opens - list_stat\n> * daily_clicks - list_stat\n> * daily_webhits - list_stat\n> * daily_sales - list_stat\n> * daily_unsubscribes - list_stat\n\n> __Top 10 URL Statistics__\n>\n> * clicks_by_link - list_stat\n> * webhits_by_link - list_stat\n\n>  __Top 10 Subscriber Statistics__ (Requires access to subscriber data)\n>\n> * opens_by_subscriber - list_stat\n> * sales_by_subscriber - list_stat\n"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1796,13 +1796,13 @@ pub struct Stats {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<Stat>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1855,7 +1855,7 @@ pub struct Subscriber {
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
     pub last_followup_sent_at: Option<::chrono::DateTime<::chrono::offset::Utc>>,
     #[doc = "A link to the [Last Follow Up Message](#tag/Campaigns/paths/~1accounts~1{accountId}~1lists~1{listId}~1campaigns~1{campaignType}{campaignId}/get) the subscriber was sent"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub last_followup_sent_link: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub latitude: Option<f64>,
@@ -1874,10 +1874,10 @@ pub struct Subscriber {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub region: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<SubscriberResourceTypeLink>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The subscriber's status"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1948,12 +1948,12 @@ pub struct SubscriberFind {
     #[serde(default, skip_serializing_if = "Option::is_none", with = "flexible_datetime::option")]
     pub last_followup_sent_at: Option<::chrono::DateTime<::chrono::offset::Utc>>,
     #[doc = "A link to the [Last Follow Up Message](#tag/Campaigns/paths/~1accounts~1{accountId}~1lists~1{listId}~1campaigns~1{campaignType}{campaignId}/get) the subscriber was sent"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub last_followup_sent_link: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub latitude: Option<f64>,
     #[doc = "A link to the [List](#tag/Lists/paths/~1accounts~1{accountId}~1lists~1{listId}/get) the subscriber is on"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub list_link: Option<String>,
     #[doc = "List name"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1973,10 +1973,10 @@ pub struct SubscriberFind {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub region: Option<SubscriberFindRegion>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The subscriber's status"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2024,16 +2024,16 @@ pub struct SubscriberGetActivity {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<Activity>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if previous entries exist. This attribute is omitted if this is the first page."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub start: Option<u64>,
     #[doc = "A link to check the total number of entries found for this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub total_size_link: Option<String>,
 }
 string_enum! { pub enum SubscriberResourceTypeLink { HttpsApiAweberCom10Subscriber => "https://api.aweber.com/1.0/#subscriber" } }
@@ -2047,16 +2047,16 @@ pub struct Subscribers {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<Subscriber>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if previous entries exist. This attribute is omitted if this is the first page."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "A link to the current page of entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2171,13 +2171,13 @@ pub struct WebFormSplitTests {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<WebformSplitTest>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "The link to the event type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2210,10 +2210,10 @@ pub struct Webform {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[doc = "The link to the webform type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "A list of tags added to the webform"]
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -2241,7 +2241,7 @@ pub struct Webform {
 #[derive(serde::Deserialize, serde::Serialize, Clone, Debug, Default)]
 pub struct WebformSplitTest {
     #[doc = "The webform [Split Test Components](#tag/Webforms/paths/~1accounts~1{accountId}~1lists~1{listId}~1web_form_split_tests~1{splitTestId}~1components/get) URL"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub components_collection_link: Option<String>,
     #[doc = "The ETag HTTP header"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2259,10 +2259,10 @@ pub struct WebformSplitTest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[doc = "The link to the split test type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
 }
 #[doc = "`WebformSplitTestComponent`"]
@@ -2289,10 +2289,10 @@ pub struct WebformSplitTestComponent {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[doc = "The link to the webform type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The link to this resource"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub self_link: Option<String>,
     #[doc = "A list of tags added to the webform component"]
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -2316,7 +2316,7 @@ pub struct WebformSplitTestComponent {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub unique_conversion_percentage: Option<f32>,
     #[doc = "The link to [Webform](#tag/Webforms/paths/~1accounts~1{accountId}~1lists~1{listId}~1web_forms~1{webformId}/get)"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub web_form_link: Option<String>,
     #[doc = "The relative display weight"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2330,13 +2330,13 @@ pub struct WebformSplitTestComponents {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<WebformSplitTestComponent>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "The link to the Component type"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2354,13 +2354,13 @@ pub struct Webforms {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entries: Vec<Webform>,
     #[doc = "A link to the next page of entries if more entries exist. This attribute is omitted from the collection if there are no more entries."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub next_collection_link: Option<String>,
     #[doc = "A link to the previous page of entries if any exist. This attribute is omitted from the collection if ws.start is 0."]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub prev_collection_link: Option<String>,
     #[doc = "A link that identifies the type of resource that this collection represents"]
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing)]
     pub resource_type_link: Option<String>,
     #[doc = "The starting offset for the page of entries to retrieve"]
     #[serde(default, skip_serializing_if = "Option::is_none")]
