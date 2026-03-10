@@ -66,7 +66,7 @@ pub async fn find_account_subscribers(
     ApiRequest::new(
         client,
         Method::GET,
-        format!("/accounts/{account_id}/findSubscribers"),
+        format!("/accounts/{account_id}"),
     )
     .query("ws.op", "findSubscribers")
     .query_opt("ad_tracking", ad_tracking)
@@ -122,7 +122,7 @@ pub async fn list_account_webform_split_tests(
     ApiRequest::new(
         client,
         Method::GET,
-        format!("/accounts/{account_id}/getWebFormSplitTests"),
+        format!("/accounts/{account_id}"),
     )
     .query("ws.op", "getWebFormSplitTests")
     .query_opt("ws.size", ws_size)
@@ -140,7 +140,7 @@ pub async fn list_account_webforms(
     ApiRequest::new(
         client,
         Method::GET,
-        format!("/accounts/{account_id}/getWebForms"),
+        format!("/accounts/{account_id}"),
     )
     .query("ws.op", "getWebForms")
     .query_opt("ws.size", ws_size)
@@ -216,7 +216,7 @@ pub async fn find_lists(
     ApiRequest::new(
         client,
         Method::GET,
-        format!("/accounts/{account_id}/lists/find"),
+        format!("/accounts/{account_id}/lists"),
     )
     .query("ws.op", "find")
     .query_opt("name", name)
@@ -493,7 +493,7 @@ pub async fn find_campaigns(
     ApiRequest::new(
         client,
         Method::GET,
-        format!("/accounts/{account_id}/lists/{list_id}/campaigns/find"),
+        format!("/accounts/{account_id}/lists/{list_id}/campaigns"),
     )
     .query("ws.op", "find")
     .query("campaign_type", campaign_type)
@@ -820,7 +820,7 @@ pub async fn find_subscribers(
     ApiRequest::new(
         client,
         Method::GET,
-        format!("/accounts/{account_id}/lists/{list_id}/subscribers/find"),
+        format!("/accounts/{account_id}/lists/{list_id}/subscribers"),
     )
     .query("ws.op", "find")
     .query_opt("ad_tracking", ad_tracking)
@@ -949,7 +949,7 @@ pub async fn get_subscriber_activity(
         client,
         Method::GET,
         format!(
-            "/accounts/{account_id}/lists/{list_id}/subscribers/{subscriber_id}/getActivity"
+            "/accounts/{account_id}/lists/{list_id}/subscribers/{subscriber_id}"
         ),
     )
     .query("ws.op", "getActivity")
