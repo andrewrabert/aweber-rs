@@ -534,6 +534,7 @@ impl Cli {
     pub fn cli_update_subscriber_by_email() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("ad-tracking") . long ("ad-tracking") . value_parser (clap::value_parser! (types :: UpdateSubscriberRequestBodyAdTracking)) . required (false) . help ("The customer ad tracking field"))
+            .arg (clap::Arg::new ("custom-field") . long ("custom-field") . value_parser (clap::value_parser! (String)) . required (false) . action (clap::ArgAction::Append) . value_name ("KEY=VALUE") . help ("Set a custom field value (can be repeated)"))
             .arg (clap::Arg::new ("email") . long ("email") . value_parser (clap::value_parser! (String)) . required (false) . help ("The subscriber's email address"))
             .arg (clap::Arg::new ("last-followup-message-number-sent") . long ("last-followup-message-number-sent") . value_parser (clap::value_parser! (i64)) . required (false) . help ("The sequence number of the last followup message sent to the subscriber.  This field determines the next followup message to be sent to the Subscriber.  When set to 0, the Subscriber will receive the 1st (autoresponse) Followup message.  Set the value of this field to 1001 if you do not want any Followups to be sent to this Subscriber."))
             .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
@@ -608,6 +609,7 @@ impl Cli {
     pub fn cli_update_subscriber() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("ad-tracking") . long ("ad-tracking") . value_parser (clap::value_parser! (types :: UpdateSubscriberRequestBodyAdTracking)) . required (false) . help ("The customer ad tracking field"))
+            .arg (clap::Arg::new ("custom-field") . long ("custom-field") . value_parser (clap::value_parser! (String)) . required (false) . action (clap::ArgAction::Append) . value_name ("KEY=VALUE") . help ("Set a custom field value (can be repeated)"))
             .arg (clap::Arg::new ("email") . long ("email") . value_parser (clap::value_parser! (String)) . required (false) . help ("The subscriber's email address"))
             .arg (clap::Arg::new ("last-followup-message-number-sent") . long ("last-followup-message-number-sent") . value_parser (clap::value_parser! (i64)) . required (false) . help ("The sequence number of the last followup message sent to the subscriber.  This field determines the next followup message to be sent to the Subscriber.  When set to 0, the Subscriber will receive the 1st (autoresponse) Followup message.  Set the value of this field to 1001 if you do not want any Followups to be sent to this Subscriber."))
             .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
@@ -1804,6 +1806,13 @@ impl Cli {
             if let Some(v) = matches.get_one::<types::UpdateSubscriberRequestBodyName>("name") { body.insert("name".into(), serde_json::json!(v.to_string())); }
             if let Some(v) = matches.get_one::<types::UpdateSubscriberRequestBodyStatus>("status") { body.insert("status".into(), serde_json::json!(v.to_string())); }
             if let Some(v) = matches.get_one::<types::UpdateSubscriberRequestBodyStrictCustomFields>("strict-custom-fields") { body.insert("strict_custom_fields".into(), serde_json::json!(v.to_string())); }
+            if let Some(vals) = matches.get_many::<String>("custom-field") {
+                let cf: serde_json::Map<String, serde_json::Value> = vals
+                    .filter_map(|s| s.split_once('='))
+                    .map(|(k, v)| (k.to_string(), serde_json::json!(v)))
+                    .collect();
+                body.insert("custom_fields".into(), serde_json::Value::Object(cf));
+            }
             serde_json::from_value::<types::UpdateSubscriberRequestBody>(serde_json::Value::Object(body))?
         };
         let result = crate::endpoints::update_subscriber_by_email(
@@ -1948,6 +1957,13 @@ impl Cli {
             if let Some(v) = matches.get_one::<types::UpdateSubscriberRequestBodyName>("name") { body.insert("name".into(), serde_json::json!(v.to_string())); }
             if let Some(v) = matches.get_one::<types::UpdateSubscriberRequestBodyStatus>("status") { body.insert("status".into(), serde_json::json!(v.to_string())); }
             if let Some(v) = matches.get_one::<types::UpdateSubscriberRequestBodyStrictCustomFields>("strict-custom-fields") { body.insert("strict_custom_fields".into(), serde_json::json!(v.to_string())); }
+            if let Some(vals) = matches.get_many::<String>("custom-field") {
+                let cf: serde_json::Map<String, serde_json::Value> = vals
+                    .filter_map(|s| s.split_once('='))
+                    .map(|(k, v)| (k.to_string(), serde_json::json!(v)))
+                    .collect();
+                body.insert("custom_fields".into(), serde_json::Value::Object(cf));
+            }
             serde_json::from_value::<types::UpdateSubscriberRequestBody>(serde_json::Value::Object(body))?
         };
         let result = crate::endpoints::update_subscriber(
