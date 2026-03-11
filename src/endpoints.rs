@@ -762,7 +762,7 @@ pub async fn update_subscriber_by_email(
     account_id: i32,
     list_id: i32,
     subscriber_email: &str,
-    body: &types::UpdateSubscriberRequestBody,
+    body: &serde_json::Value,
 ) -> Result<types::Subscriber, ApiError> {
     ApiRequest::new(
         client,
@@ -921,7 +921,7 @@ pub async fn update_subscriber(
     account_id: i32,
     list_id: i32,
     subscriber_id: i32,
-    body: &types::UpdateSubscriberRequestBody,
+    body: &serde_json::Value,
 ) -> Result<types::Subscriber, ApiError> {
     ApiRequest::new(
         client,
