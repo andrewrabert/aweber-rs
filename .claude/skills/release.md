@@ -1,6 +1,6 @@
 ---
 name: release
-description: This skill should be used when the user asks to "cut a release", "tag a release", "prepare a release", "bump the version", or mentions releasing a new version. Guides the full release process from changelog through tagging.
+description: Use for ANY release, version, or tagging task. Triggers include "cut a release", "tag a release", "tag a new release", "tag v0.x.x", "prepare a release", "bump the version", "release v0.x.x", "new release", "create a release", or any mention of version bumps, git tags for versions, or releasing. This skill MUST be invoked before taking any action.
 ---
 
 # Release Process
