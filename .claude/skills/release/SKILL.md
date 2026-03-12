@@ -17,29 +17,42 @@ Check the current version in `Cargo.toml` and the git tags. The new version must
 
 If the user hasn't specified which bump, recommend one based on the changes since the last tag and confirm before proceeding.
 
-## 2. Update CHANGELOG.md
-
-Use the **changelog** skill for format and style guidance. Move entries from `[Unreleased]` into a new version heading, or write new entries by inspecting `git log <last-tag>..HEAD`.
-
-## 3. Bump Version in Cargo.toml
+## 2. Bump Version in Cargo.toml
 
 Update the `version` field in `Cargo.toml`. Run `cargo check` to ensure `Cargo.lock` updates cleanly.
 
-## 4. Commit
+## 3. Commit
 
 Create a single commit with message: `Release v<version>`
 
-Stage only `CHANGELOG.md`, `Cargo.toml`, and `Cargo.lock` (if changed).
+Stage only `Cargo.toml` and `Cargo.lock` (if changed).
 
-## 5. Tag
+## 4. Tag
 
-Create an annotated tag:
+Create an annotated tag with release notes as the message. Inspect `git log <last-tag>..HEAD` and write user-facing release notes in the tag message.
 
-```sh
-git tag -a v<version> -m "v<version>"
+### Tag Message Format
+
+```
+v<version>
+
+### Added
+- Description of new feature
+
+### Changed
+- Description of change
+
+### Fixed
+- Description of fix
 ```
 
-## 6. Push
+Use only the categories that have entries. Order: Added, Changed, Deprecated, Removed, Fixed, Security. Write in imperative mood ("Add feature" not "Added feature"). Focus on user-facing changes, skip internal-only changes. Prefix breaking changes with **BREAKING:**.
+
+### Creating the Tag
+
+Use `git tag -a v<version> -F -` with a heredoc to pass the message.
+
+## 5. Push
 
 Push both the commit and the tag. The release workflow (`.github/workflows/release.yml`) triggers on `v*` tags and builds binaries for all targets automatically.
 
