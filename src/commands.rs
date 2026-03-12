@@ -113,6 +113,10 @@ static GROUPS: &[Group] = &[
                 command: CliCommand::CancelBroadcast,
             },
             Route {
+                action: "wait",
+                command: CliCommand::WaitBroadcast,
+            },
+            Route {
                 action: "total",
                 command: CliCommand::GetBroadcastTotal,
             },
@@ -405,8 +409,8 @@ mod tests {
             "route table contains duplicate commands"
         );
 
-        // Verify count is exactly 53.
-        assert_eq!(routed.len(), 53, "expected 53 routed commands");
+        // Verify count is exactly 54.
+        assert_eq!(routed.len(), 54, "expected 54 routed commands");
 
         // Verify every non-OAuth CliCommand variant is present.
         let hidden_set: HashSet<String> =

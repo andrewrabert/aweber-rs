@@ -47,6 +47,7 @@ impl Cli {
             CliCommand::ScheduleBroadcast => {
                 Self::cli_schedule_broadcast()
             }
+            CliCommand::WaitBroadcast => Self::cli_wait_broadcast(),
             CliCommand::ListCampaigns => Self::cli_list_campaigns(),
             CliCommand::ListCampaignStats => {
                 Self::cli_list_campaign_stats()
@@ -330,6 +331,13 @@ impl Cli {
             .arg (clap::Arg::new ("scheduled-for") . long ("scheduled-for") . value_parser (clap::value_parser! (chrono::DateTime<chrono::Utc>)) . required_unless_present ("json-body") . help ("Scheduled time for sending broadcast message, ISO-8601 formatted."))
             .arg (clap::Arg::new ("json-body") . long ("json-body") . value_name ("JSON-FILE") . required (false) . value_parser (clap::value_parser! (std :: path :: PathBuf)) . help ("Path to a file that contains the full json body."))
             .about ("Schedule broadcast")
+    }
+    pub fn cli_wait_broadcast() -> clap::Command {
+        clap::Command::new("")
+            .arg(clap::Arg::new("broadcast-id").long("broadcast-id").value_parser(clap::value_parser!(i32)).required(true).help("The broadcast ID"))
+            .arg(clap::Arg::new("list-id").long("list-id").value_parser(clap::value_parser!(i32)).required(true).help("The list ID"))
+            .arg(clap::Arg::new("interval").long("interval").value_parser(clap::value_parser!(u64)).default_value("30").help("Polling interval in seconds"))
+            .about("Wait for a broadcast to finish sending")
     }
     pub fn cli_list_campaigns() -> clap::Command {
         clap::Command::new ("")
@@ -902,6 +910,9 @@ impl Cli {
                 self.execute_schedule_broadcast(matches)
                     .await
             }
+            CliCommand::WaitBroadcast => {
+                self.execute_wait_broadcast(matches).await
+            }
             CliCommand::ListCampaigns => {
                 self.execute_list_campaigns(matches).await
             }
@@ -1400,6 +1411,42 @@ impl Cli {
         .await;
         self.print_result(result)
     }
+
+    pub async fn execute_wait_broadcast(
+        &self,
+        matches: &clap::ArgMatches,
+    ) -> anyhow::Result<()> {
+        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let broadcast_id = *matches.get_one::<i32>("broadcast-id").unwrap();
+        let interval = *matches.get_one::<u64>("interval").unwrap();
+
+        loop {
+            let broadcast = crate::endpoints::get_broadcast(
+                &self.client,
+                self.account_id,
+                list_id,
+                broadcast_id,
+            )
+            .await?;
+
+            match broadcast.status {
+                Some(types::BroadcastStatus::Sent) => {
+                    return self.print_result(Ok::<_, crate::client::ApiError>(broadcast));
+                }
+                Some(ref status @ (types::BroadcastStatus::Sending | types::BroadcastStatus::Scheduled)) => {
+                    eprintln!("Broadcast {broadcast_id} status: {status} — polling again in {interval}s");
+                    tokio::time::sleep(std::time::Duration::from_secs(interval)).await;
+                }
+                Some(ref status) => {
+                    anyhow::bail!("Broadcast {broadcast_id} has status: {status} — cannot wait for completion");
+                }
+                None => {
+                    anyhow::bail!("Broadcast {broadcast_id} has no status — cannot wait for completion");
+                }
+            }
+        }
+    }
+
     pub async fn execute_list_campaigns(
         &self,
         matches: &clap::ArgMatches,
@@ -2354,6 +2401,7 @@ pub enum CliCommand {
     GetBroadcastClicks,
     GetBroadcastOpens,
     ScheduleBroadcast,
+    WaitBroadcast,
     ListCampaigns,
     ListCampaignStats,
     GetCampaignStat,
@@ -2415,6 +2463,7 @@ impl CliCommand {
             CliCommand::GetBroadcastClicks,
             CliCommand::GetBroadcastOpens,
             CliCommand::ScheduleBroadcast,
+            CliCommand::WaitBroadcast,
             CliCommand::ListCampaigns,
             CliCommand::ListCampaignStats,
             CliCommand::GetCampaignStat,
