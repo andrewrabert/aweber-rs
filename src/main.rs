@@ -5,6 +5,9 @@ mod commands;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    rustls::crypto::ring::default_provider()
+        .install_default()
+        .expect("failed to install rustls crypto provider");
     // First pass: handle cases that don't need credentials
     let args: Vec<String> = std::env::args().collect();
 
