@@ -237,7 +237,7 @@ impl Cli {
     pub fn cli_list_broadcasts() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
-            .arg (clap::Arg::new ("status") . long ("status") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsBroadcastsStatus :: Draft . to_string () , types :: GetAccountsListsBroadcastsStatus :: Scheduled . to_string () , types :: GetAccountsListsBroadcastsStatus :: Sent . to_string () ,]) , | s | types :: GetAccountsListsBroadcastsStatus :: try_from (s) . unwrap ())) . required (true) . help ("The status of the broadcasts to retrieve. **(Please be aware that `draft` only returns API created Broadcast drafts)**"))
+            .arg (clap::Arg::new ("status") . long ("status") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsBroadcastsStatus :: Draft . to_string () , types :: GetAccountsListsBroadcastsStatus :: Scheduled . to_string () , types :: GetAccountsListsBroadcastsStatus :: Sent . to_string () ,]) , | s | types :: GetAccountsListsBroadcastsStatus :: try_from (s) . unwrap ())) . required (false) . help ("Filter by status (draft, scheduled, sent). If omitted, all statuses are retrieved. **(Please be aware that `draft` only returns API created Broadcast drafts)**"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
             .arg(Self::limit_arg())
@@ -1197,16 +1197,26 @@ impl Cli {
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
         let list_id = *matches.get_one::<i32>("list-id").unwrap();
-        let result = crate::endpoints::list_broadcasts(
-            &self.client,
-            self.account_id,
-            list_id,
-            matches.get_one::<types::GetAccountsListsBroadcastsStatus>("status"),
-            matches.get_one::<std::num::NonZeroU32>("ws-size").copied(),
-            matches.get_one::<i32>("ws-start").copied(),
-        )
-        .await;
-        self.print_paginated_ndjson(result, matches).await
+        let ws_size = matches.get_one::<std::num::NonZeroU32>("ws-size").copied();
+        let ws_start = matches.get_one::<i32>("ws-start").copied();
+        use types::GetAccountsListsBroadcastsStatus::*;
+        let statuses = match matches.get_one::<types::GetAccountsListsBroadcastsStatus>("status") {
+            Some(&status) => vec![status],
+            None => vec![Draft, Scheduled, Sent],
+        };
+        for status in &statuses {
+            let result = crate::endpoints::list_broadcasts(
+                &self.client,
+                self.account_id,
+                list_id,
+                Some(status),
+                ws_size,
+                ws_start,
+            )
+            .await;
+            self.print_paginated_ndjson(result, matches).await?;
+        }
+        Ok(())
     }
     pub async fn execute_create_broadcast(
         &self,
