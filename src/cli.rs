@@ -142,6 +142,17 @@ impl Cli {
             .help("Maximum total number of entries to output")
     }
 
+    fn list_id_args() -> [clap::Arg; 2] {
+        [
+            clap::Arg::new("list-id").long("list-id").value_parser(clap::value_parser!(i32)).help("The list ID"),
+            clap::Arg::new("list-name").long("list-name").value_parser(clap::value_parser!(String)).help("The list name (looked up via the API)"),
+        ]
+    }
+
+    fn list_id_group() -> clap::ArgGroup {
+        clap::ArgGroup::new("list-identifier").args(["list-id", "list-name"]).required(true)
+    }
+
     pub fn cli_list_accounts() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
@@ -231,12 +242,14 @@ impl Cli {
     }
     pub fn cli_get_list() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .about ("Get list")
     }
     pub fn cli_list_broadcasts() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("status") . long ("status") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsBroadcastsStatus :: Draft . to_string () , types :: GetAccountsListsBroadcastsStatus :: Scheduled . to_string () , types :: GetAccountsListsBroadcastsStatus :: Sent . to_string () ,]) , | s | types :: GetAccountsListsBroadcastsStatus :: try_from (s) . unwrap ())) . required (false) . help ("Filter by status (draft, scheduled, sent). If omitted, all statuses are retrieved. **(Please be aware that `draft` only returns API created Broadcast drafts)**"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
@@ -253,7 +266,8 @@ impl Cli {
             .arg (clap::Arg::new ("facebook-integration") . long ("facebook-integration") . value_parser (clap::value_parser! (String)) . required (false) . help ("URL to the [Facebook broadcast integration](#tag/Integrations) to use for this broadcast. When the broadcast is sent, the subject of the broadcast will be posted to this Facebook integration  - e.g., `https://api.aweber.com/1.0/accounts/<account_id>/integrations/<integration_id>`"))
             .arg (clap::Arg::new ("include-lists") . long ("include-lists") . value_parser (clap::value_parser! (String)) . required (false) . help ("JSON encoded list of [Lists](#tag/Lists) URLs to include in the delivery of this broadcast. Use the `self_link` of the list here - e.g. `https://api.aweber.com/1.0/accounts/<account_id>/lists/<list_id>`. If updated, this value will replace the existing included_lists."))
             .arg (clap::Arg::new ("is-archived") . long ("is-archived") . value_parser (clap::value_parser! (bool)) . required (false) . help ("Whether the broadcast enabled sharing via an archive url"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("notify-on-send") . long ("notify-on-send") . value_parser (clap::value_parser! (bool)) . required (false) . help ("If true, notify when stats are available on a sent broadcast message"))
             .arg (clap::Arg::new ("subject") . long ("subject") . value_parser (clap::value_parser! (String)) . required_unless_present ("json-body") . help ("The broadcast subject line. Subject must not be empty nor contain only whitespace."))
             .arg (clap::Arg::new ("twitter-integration") . long ("twitter-integration") . value_parser (clap::value_parser! (String)) . required (false) . help ("URL to the [Twitter broadcast integration](#tag/Integrations) to use for this broadcast. When the broadcast is sent, the subject of the broadcast will be tweeted - e.g., `https://api.aweber.com/1.0/accounts/<account_id>/integrations/<integration_id>`"))
@@ -262,14 +276,16 @@ impl Cli {
     }
     pub fn cli_get_broadcast_total() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("status") . long ("status") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsBroadcastsTotalStatus :: Draft . to_string () , types :: GetAccountsListsBroadcastsTotalStatus :: Scheduled . to_string () , types :: GetAccountsListsBroadcastsTotalStatus :: Sent . to_string () ,]) , | s | types :: GetAccountsListsBroadcastsTotalStatus :: try_from (s) . unwrap ())) . required (true) . help ("The status of the broadcasts to retrieve. **(Please be aware that `draft` only returns API created Broadcast drafts)**"))
             .about ("Get total broadcasts")
     }
     pub fn cli_get_broadcast() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("broadcast-id") . long ("broadcast-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The broadcast ID"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .about ("Get broadcast")
     }
     pub fn cli_update_broadcast() -> clap::Command {
@@ -283,7 +299,8 @@ impl Cli {
             .arg (clap::Arg::new ("facebook-integration") . long ("facebook-integration") . value_parser (clap::value_parser! (String)) . required (false) . help ("URL to the [Facebook broadcast integration](#tag/Integrations) to use for this broadcast. When the broadcast is sent, the subject of the broadcast will be posted to this Facebook integration  - e.g., `https://api.aweber.com/1.0/accounts/<account_id>/integrations/<integration_id>`"))
             .arg (clap::Arg::new ("include-lists") . long ("include-lists") . value_parser (clap::value_parser! (String)) . required (false) . help ("JSON encoded list of [Lists](#tag/Lists) URLs to include in the delivery of this broadcast. Use the `self_link` of the list here - e.g. `https://api.aweber.com/1.0/accounts/<account_id>/lists/<list_id>`. If updated, this value will replace the existing included_lists."))
             .arg (clap::Arg::new ("is-archived") . long ("is-archived") . value_parser (clap::value_parser! (bool)) . required (false) . help ("Whether the broadcast enabled sharing via an archive url."))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("notify-on-send") . long ("notify-on-send") . value_parser (clap::value_parser! (bool)) . required (false) . help ("If true, notify when stats are available on a sent broadcast message, defaults to true."))
             .arg (clap::Arg::new ("segment-link") . long ("segment-link") . value_parser (clap::value_parser! (String)) . required (false) . help ("URL to the [Segment](#tag/Segments) to send this broadcast to.  Use the `self_link` of the segment here - e.g. `https://api.aweber.com/1.0/accounts/<account_id>/lists/<list_id>/segments/<segment_id>`. If not specified, the broadcast will be sent to the \"Active Subscribers\" segment."))
             .arg (clap::Arg::new ("subject") . long ("subject") . value_parser (clap::value_parser! (String)) . required (false) . help ("The broadcast subject line. Subject must not be empty nor contain only whitespace."))
@@ -294,13 +311,15 @@ impl Cli {
     pub fn cli_delete_broadcast() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("broadcast-id") . long ("broadcast-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The broadcast ID"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .about ("Delete broadcast")
     }
     pub fn cli_cancel_broadcast() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("broadcast-id") . long ("broadcast-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The broadcast ID"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .about ("Cancel scheduled broadcast")
     }
     pub fn cli_get_broadcast_clicks() -> clap::Command {
@@ -309,7 +328,8 @@ impl Cli {
             .arg (clap::Arg::new ("before") . long ("before") . value_parser (clap::value_parser! (String)) . required (false) . help ("The pagination key when paging in reverse. Cannot be combined with `after`."))
             .arg (clap::Arg::new ("broadcast-id") . long ("broadcast-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The broadcast ID"))
             .arg (clap::Arg::new ("detailed") . long ("detailed") . value_parser (clap::value_parser! (bool)) . required (false) . help ("When true, returns individual click events with URLs instead of aggregated click data per subscriber"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("page-size") . long ("page-size") . value_parser (clap::value_parser! (std::num::NonZeroU64)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg(Self::limit_arg())
             .about ("Get broadcast clicks")
@@ -319,7 +339,8 @@ impl Cli {
             .arg (clap::Arg::new ("after") . long ("after") . value_parser (clap::value_parser! (String)) . required (false) . help ("The pagination key when paging forward. Cannot be combined with `before`."))
             .arg (clap::Arg::new ("before") . long ("before") . value_parser (clap::value_parser! (String)) . required (false) . help ("The pagination key when paging in reverse. Cannot be combined with `after`."))
             .arg (clap::Arg::new ("broadcast-id") . long ("broadcast-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The broadcast ID"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("page-size") . long ("page-size") . value_parser (clap::value_parser! (std::num::NonZeroU64)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg(Self::limit_arg())
             .about ("Get broadcast opens")
@@ -327,7 +348,8 @@ impl Cli {
     pub fn cli_schedule_broadcast() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("broadcast-id") . long ("broadcast-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The broadcast ID"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("scheduled-for") . long ("scheduled-for") . value_parser (clap::value_parser! (chrono::DateTime<chrono::Utc>)) . required_unless_present ("json-body") . help ("Scheduled time for sending broadcast message, ISO-8601 formatted."))
             .arg (clap::Arg::new ("json-body") . long ("json-body") . value_name ("JSON-FILE") . required (false) . value_parser (clap::value_parser! (std :: path :: PathBuf)) . help ("Path to a file that contains the full json body."))
             .about ("Schedule broadcast")
@@ -335,13 +357,15 @@ impl Cli {
     pub fn cli_wait_broadcast() -> clap::Command {
         clap::Command::new("")
             .arg(clap::Arg::new("broadcast-id").long("broadcast-id").value_parser(clap::value_parser!(i32)).required(true).help("The broadcast ID"))
-            .arg(clap::Arg::new("list-id").long("list-id").value_parser(clap::value_parser!(i32)).required(true).help("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg(clap::Arg::new("interval").long("interval").value_parser(clap::value_parser!(u64)).default_value("30").help("Polling interval in seconds"))
             .about("Wait for a broadcast to finish sending")
     }
     pub fn cli_list_campaigns() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
             .arg(Self::limit_arg())
@@ -350,7 +374,8 @@ impl Cli {
     pub fn cli_list_campaign_stats() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("campaign-id") . long ("campaign-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The campaign ID"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
             .arg(Self::limit_arg())
@@ -359,14 +384,16 @@ impl Cli {
     pub fn cli_get_campaign_stat() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("campaign-id") . long ("campaign-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The campaign ID"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("stats-id") . long ("stats-id") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: TotalClicks . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: UniqueClicks . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: TotalOpens . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: UniqueOpens . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: TotalSales . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: TotalSalesDollars . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: TotalUnsubscribed . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: HourlyOpens . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: HourlyClicks . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: HourlyWebhits . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: HourlySales . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: HourlyUnsubscribed . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: DailyOpens . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: DailyClicks . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: DailyWebhits . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: DailySales . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: DailyUnsubscribed . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: ClicksByLink . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: WebhitsByLink . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: OpensBySubscriber . to_string () , types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: SalesBySubscriber . to_string () ,]) , | s | types :: GetAccountsListsCampaignsBcampaignidStats2StatsId :: try_from (s) . unwrap ())) . required (true) . help ("\n\n>The statistic's ID.\n>\n>The datatype of the ID may be different for each Stat.\n>\n>Below is a list of the statistic IDs that can be passed in.\n>\n>__Aggregate Statistics__\n>\n>| Stat ID | Description |\n>|---------|-------------|\n>| total_clicks | Total number of times a subscriber clicked any link appearing in your campaign except the unsubscribe link (includes multiple clicks of the same link) |\n>| unique_clicks | Total number of subscribers who clicked any link in your campaign |\n>| total_opens | Total number of times your campaign was opened by any subscriber your campaign was sent to (including multiple opens by the same subscriber) |\n>| unique_opens | Total number of subscribers who opened your campaign |\n>| total_sales | Total number of sales made by subscribers who received your campaign |\n>| total_sales_dollars | Total monetary value of sales made by subscribers who received your campaign |\n>| total_unsubscribed | Total number of subscribers who unsubscribed by clicking the unsubscribe link in your campaign |\n>\n>__Time Related Statistics__\n>\n>| Stat ID | Description |\n>|---------|-------------|\n>| hourly_clicks | Hourly breakdown of unique and total clicks for the first 24 hours after a campaign was sent |\n>| hourly_opens | Hourly breakdown of unique and total opens for the first 24 hours after a campaign was sent |\n>| hourly_sales | Hourly breakdown of sales for the first 24 hours after a campaign was sent |\n>| hourly_unsubscribed | Hourly breakdown of subscribers who unsubscribed by clicking the unsubscribed link for the first 24 hours after a campaign was sent |\n>| hourly_webhits | Hourly breakdown of webhits to your website from subscribers sent this message for the first 24 hours after a campaign was sent |\n>| daily_clicks | Daily breakdown of unique and total clicks for the first 14 days after a campaign was sent |\n>| daily_opens | Daily breakdown of unique and total opens for the first 14 days after a campaign was sent |\n>| daily_sales | Daily breakdown of sales for the first 14 days after a campaign was sent |\n>| daily_unsubscribed | Daily breakdown of subscribers who unsuscribed by clicking the unsubscribed link for the first 14 days after a campaign was sent |\n>| daily_webhits | Daily breakdown of webhits to your website from subscribers sent this message for the first 14 days after a campaign was sent |\n>\n>__Top 10 URL Statistics__\n>\n>| Stat ID | Description |\n>|---------|-------------|\n>| clicks_by_link | Top 10 links that were clicked (ranked by total_clicked) |\n>| webhits_by_link | Top 10 webhits by click (ranked by total clicks) |\n>\n>__Top 10 Subscriber Statistics__\n>(Requires access to subscriber data)\n>\n>| Stat ID | Description |\n>|---------|-------------|\n>| opens_by_subscriber | Top 10 subscribers that opened your message (ranked by total opens) |\n>| sales_by_subscriber | Top 10 subscribers that made a sale from your message (ranked by total sales dollars) |\n"))
             .about ("Get broadcast statistic")
     }
     pub fn cli_find_campaigns() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("campaign-type") . long ("campaign-type") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsCampaignsFindCampaignType :: B . to_string () , types :: GetAccountsListsCampaignsFindCampaignType :: F . to_string () ,]) , | s | types :: GetAccountsListsCampaignsFindCampaignType :: try_from (s) . unwrap ())) . required (true) . help ("The campaign type (b - broadcast, f - followup)"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("ws-show") . long ("ws-show") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsCampaignsFindWsShow :: TotalSize . to_string () ,]) , | s | types :: GetAccountsListsCampaignsFindWsShow :: try_from (s) . unwrap ())) . required (false) . help ("A flag to show the total size only - expecting \\\"total_size\\\", when added the response will be an integer"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
@@ -377,12 +404,14 @@ impl Cli {
         clap::Command::new ("")
             .arg (clap::Arg::new ("campaign-id") . long ("campaign-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The campaign ID"))
             .arg (clap::Arg::new ("campaign-type") . long ("campaign-type") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsCampaignsCampaigntypecampaignidCampaignType :: B . to_string () , types :: GetAccountsListsCampaignsCampaigntypecampaignidCampaignType :: F . to_string () ,]) , | s | types :: GetAccountsListsCampaignsCampaigntypecampaignidCampaignType :: try_from (s) . unwrap ())) . required (true) . help ("The campaign type (b - broadcast, f - followup)"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .about ("Get campaign")
     }
     pub fn cli_list_custom_fields() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
             .arg(Self::limit_arg())
@@ -390,7 +419,8 @@ impl Cli {
     }
     pub fn cli_create_custom_field() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("name") . long ("name") . value_parser (clap::value_parser! (String)) . required_unless_present ("json-body") . help ("The name of the custom field"))
             .arg (clap::Arg::new ("json-body") . long ("json-body") . value_name ("JSON-FILE") . required (false) . value_parser (clap::value_parser! (std :: path :: PathBuf)) . help ("Path to a file that contains the full json body."))
             .about ("Add custom field")
@@ -398,20 +428,23 @@ impl Cli {
     pub fn cli_get_custom_field() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("custom-field-id") . long ("custom-field-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The custom field ID"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .about ("Get custom field")
     }
     pub fn cli_delete_custom_field() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("custom-field-id") . long ("custom-field-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The custom field ID"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .about ("Delete custom field")
     }
     pub fn cli_update_custom_field() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("custom-field-id") . long ("custom-field-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The custom field ID"))
             .arg (clap::Arg::new ("is-subscriber-updateable") . long ("is-subscriber-updateable") . value_parser (clap::value_parser! (bool)) . required (false) . help ("Whether the subscriber is allowed to update the custom field"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("name") . long ("name") . value_parser (clap::value_parser! (String)) . required (false) . help ("The name of the custom field"))
             .arg (clap::Arg::new ("json-body") . long ("json-body") . value_name ("JSON-FILE") . required (false) . value_parser (clap::value_parser! (std :: path :: PathBuf)) . help ("Path to a file that contains the full json body."))
             .about ("Update custom field")
@@ -445,7 +478,8 @@ impl Cli {
     pub fn cli_get_landing_page() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("landing-page-id") . long ("landing-page-id") . value_parser (clap::value_parser! (:: uuid :: Uuid)) . required (true) . help ("The landing page ID"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .about ("Get landing page")
     }
     pub fn cli_create_purchase() -> clap::Command {
@@ -456,7 +490,8 @@ impl Cli {
             .arg (clap::Arg::new ("event-note") . long ("event-note") . value_parser (clap::value_parser! (String)) . required_unless_present ("json-body") . help ("A custom note associated with this specific tracked event"))
             .arg (clap::Arg::new ("event-time") . long ("event-time") . value_parser (clap::value_parser! (String)) . required_unless_present ("json-body") . help ("The timestamp of when the event occurred"))
             .arg (clap::Arg::new ("ip-address") . long ("ip-address") . value_parser (clap::value_parser! (types :: PurchaseIpAddress)) . required_unless_present ("json-body") . help ("The subscriber's IP address. This must be a public IP address."))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("misc-notes") . long ("misc-notes") . value_parser (clap::value_parser! (types :: PurchaseMiscNotes)) . required (false) . help ("Miscellaneous notes"))
             .arg (clap::Arg::new ("name") . long ("name") . value_parser (clap::value_parser! (types :: PurchaseName)) . required (false) . help ("The subscriber's name"))
             .arg (clap::Arg::new ("product-name") . long ("product-name") . value_parser (clap::value_parser! (String)) . required_unless_present ("json-body") . help ("A custom description for the page or event"))
@@ -512,7 +547,8 @@ impl Cli {
     }
     pub fn cli_list_subscribers() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("sort-order") . long ("sort-order") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: GetAccountsListsSubscribersSortOrder :: Asc . to_string () , types :: GetAccountsListsSubscribersSortOrder :: Desc . to_string () ,]) , | s | types :: GetAccountsListsSubscribersSortOrder :: try_from (s) . unwrap ())) . required (false) . help ("The collection will be sorted by the order in which the subscribers were added to the list. To specify the order, use the value `asc` for ascending or `desc` for descending."))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
@@ -525,7 +561,8 @@ impl Cli {
             .arg (clap::Arg::new ("email") . long ("email") . value_parser (clap::value_parser! (types :: AddSubscriberRequestBodyEmail)) . required_unless_present ("json-body") . help ("The subscriber's email address"))
             .arg (clap::Arg::new ("ip-address") . long ("ip-address") . value_parser (clap::value_parser! (types :: AddSubscriberRequestBodyIpAddress)) . required (false) . help ("The subscriber's IP address. This field is used to determine the following Geo Location fields: area_code, city, country, dma_code, latitude, longitude, postal_code, and region. IP address can only be specified when Subscribers are initially created. Internal, private, or reserved IP addresses are not acceptable."))
             .arg (clap::Arg::new ("last-followup-message-number-sent") . long ("last-followup-message-number-sent") . value_parser (clap::value_parser! (i64)) . required (false) . help ("The sequence number of the last followup message sent to the subscriber.  This field determines the next followup message to be sent to the Subscriber.  When set to 0 (default), the Subscriber should receive the 1st (autoresponse) Followup message.  Set the value of this field to 1001 if you do not want any Followups to be sent to this Subscriber."))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("misc-notes") . long ("misc-notes") . value_parser (clap::value_parser! (types :: AddSubscriberRequestBodyMiscNotes)) . required (false) . help ("Miscellaneous notes"))
             .arg (clap::Arg::new ("name") . long ("name") . value_parser (clap::value_parser! (types :: AddSubscriberRequestBodyName)) . required (false) . help ("The subscriber's name"))
             .arg (clap::Arg::new ("strict-custom-fields") . long ("strict-custom-fields") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: AddSubscriberRequestBodyStrictCustomFields :: True . to_string () , types :: AddSubscriberRequestBodyStrictCustomFields :: False . to_string () ,]) , | s | types :: AddSubscriberRequestBodyStrictCustomFields :: try_from (s) . unwrap ())) . required (false) . help ("If this parameter is present and set to `true`, then custom field names are matched case sensitively.  Enabling this option also causes the operation to fail if a custom field is included that is not defined for the list."))
@@ -535,7 +572,8 @@ impl Cli {
     }
     pub fn cli_delete_subscriber_by_email() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("subscriber-email") . long ("subscriber-email") . value_parser (clap::value_parser! (types :: DeleteAccountsListsSubscribersSubscriberEmail)) . required (true) . help ("The subscriber's email address"))
             .about ("Delete subscriber by email")
     }
@@ -545,7 +583,8 @@ impl Cli {
             .arg (clap::Arg::new ("custom-field") . long ("custom-field") . value_parser (clap::value_parser! (String)) . required (false) . action (clap::ArgAction::Append) . value_name ("KEY[=VALUE]") . help ("Set a custom field (KEY=VALUE, KEY= for empty string, KEY for null)"))
             .arg (clap::Arg::new ("email") . long ("email") . value_parser (clap::value_parser! (String)) . required (false) . help ("The subscriber's email address"))
             .arg (clap::Arg::new ("last-followup-message-number-sent") . long ("last-followup-message-number-sent") . value_parser (clap::value_parser! (i64)) . required (false) . help ("The sequence number of the last followup message sent to the subscriber.  This field determines the next followup message to be sent to the Subscriber.  When set to 0, the Subscriber will receive the 1st (autoresponse) Followup message.  Set the value of this field to 1001 if you do not want any Followups to be sent to this Subscriber."))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("misc-notes") . long ("misc-notes") . value_parser (clap::value_parser! (String)) . required (false) . help ("Miscellaneous notes"))
             .arg (clap::Arg::new ("name") . long ("name") . value_parser (clap::value_parser! (types :: UpdateSubscriberRequestBodyName)) . required (false) . help ("The subscriber's name"))
             .arg (clap::Arg::new ("status") . long ("status") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: UpdateSubscriberRequestBodyStatus :: Subscribed . to_string () , types :: UpdateSubscriberRequestBodyStatus :: Unsubscribed . to_string () ,]) , | s | types :: UpdateSubscriberRequestBodyStatus :: try_from (s) . unwrap ())) . required (false) . help ("The subscriber's status. **Note** you cannot set a subscriber's status to \"unconfirmed\"."))
@@ -566,7 +605,8 @@ impl Cli {
             .arg (clap::Arg::new ("last-followup-message-number-sent") . long ("last-followup-message-number-sent") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The sequence number of the last followup message sent to the subscriber"))
             .arg (clap::Arg::new ("last-followup-message-sent-at") . long ("last-followup-message-sent-at") . value_parser (clap::value_parser! (chrono::NaiveDate)) . required (false) . help ("The day when the last followup message was sent to the subscriber"))
             .arg (clap::Arg::new ("latitude") . long ("latitude") . value_parser (clap::value_parser! (f64)) . required (false) . help ("The subscriber's geographical latitude"))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("longitude") . long ("longitude") . value_parser (clap::value_parser! (f64)) . required (false) . help ("The subscriber's geographical longitude"))
             .arg (clap::Arg::new ("misc-notes") . long ("misc-notes") . value_parser (clap::value_parser! (types :: GetAccountsListsSubscribersFindMiscNotes)) . required (false) . help ("Miscellaneous notes"))
             .arg (clap::Arg::new ("name") . long ("name") . value_parser (clap::value_parser! (types :: GetAccountsListsSubscribersFindName)) . required (false) . help ("The subscriber's name"))
@@ -594,7 +634,8 @@ impl Cli {
     }
     pub fn cli_get_subscriber() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("subscriber-id") . long ("subscriber-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The subscriber ID"))
             .about ("Get subscriber")
     }
@@ -602,7 +643,8 @@ impl Cli {
         clap::Command::new ("")
             .arg (clap::Arg::new ("enforce-custom-field-mapping") . long ("enforce-custom-field-mapping") . value_parser (clap::value_parser! (bool)) . required (false) . help ("If set to true, this will cause the move of a subscriber to fail if the custom fields from the origin list do not match (case insensitively) to the target list"))
             .arg (clap::Arg::new ("last-followup-message-number-sent") . long ("last-followup-message-number-sent") . value_parser (clap::value_parser! (i64)) . required (false) . help ("The sequence number of the last followup message sent to the subscriber.  This field determines the next followup message to be sent to the Subscriber.  When set to 0, the Subscriber will receive the 1st (autoresponse) Followup message.  Set the value of this field to 1001 if you do not want any Followups to be sent to this Subscriber."))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("list-link") . long ("list-link") . value_parser (clap::value_parser! (String)) . required_unless_present ("json-body") . help ("The link to the destination [List](#tag/Lists/paths/~1accounts~1{accountId}~1lists~1{listId}/get)"))
             .arg (clap::Arg::new ("subscriber-id") . long ("subscriber-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The subscriber ID"))
             .arg (clap::Arg::new ("json-body") . long ("json-body") . value_name ("JSON-FILE") . required (false) . value_parser (clap::value_parser! (std :: path :: PathBuf)) . help ("Path to a file that contains the full json body."))
@@ -610,7 +652,8 @@ impl Cli {
     }
     pub fn cli_delete_subscriber() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("subscriber-id") . long ("subscriber-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The subscriber ID"))
             .about ("Delete subscriber by ID")
     }
@@ -620,7 +663,8 @@ impl Cli {
             .arg (clap::Arg::new ("custom-field") . long ("custom-field") . value_parser (clap::value_parser! (String)) . required (false) . action (clap::ArgAction::Append) . value_name ("KEY[=VALUE]") . help ("Set a custom field (KEY=VALUE, KEY= for empty string, KEY for null)"))
             .arg (clap::Arg::new ("email") . long ("email") . value_parser (clap::value_parser! (String)) . required (false) . help ("The subscriber's email address"))
             .arg (clap::Arg::new ("last-followup-message-number-sent") . long ("last-followup-message-number-sent") . value_parser (clap::value_parser! (i64)) . required (false) . help ("The sequence number of the last followup message sent to the subscriber.  This field determines the next followup message to be sent to the Subscriber.  When set to 0, the Subscriber will receive the 1st (autoresponse) Followup message.  Set the value of this field to 1001 if you do not want any Followups to be sent to this Subscriber."))
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("misc-notes") . long ("misc-notes") . value_parser (clap::value_parser! (String)) . required (false) . help ("Miscellaneous notes"))
             .arg (clap::Arg::new ("name") . long ("name") . value_parser (clap::value_parser! (types :: UpdateSubscriberRequestBodyName)) . required (false) . help ("The subscriber's name"))
             .arg (clap::Arg::new ("status") . long ("status") . value_parser (clap::builder::TypedValueParser::map (clap::builder::PossibleValuesParser::new ([types :: UpdateSubscriberRequestBodyStatus :: Subscribed . to_string () , types :: UpdateSubscriberRequestBodyStatus :: Unsubscribed . to_string () ,]) , | s | types :: UpdateSubscriberRequestBodyStatus :: try_from (s) . unwrap ())) . required (false) . help ("The subscriber's status. **Note** you cannot set a subscriber's status to \"unconfirmed\"."))
@@ -631,7 +675,8 @@ impl Cli {
     }
     pub fn cli_get_subscriber_activity() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("subscriber-id") . long ("subscriber-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The subscriber ID"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
@@ -640,12 +685,14 @@ impl Cli {
     }
     pub fn cli_list_tags() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .about ("Get tags for list")
     }
     pub fn cli_list_web_form_split_tests() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
             .arg(Self::limit_arg())
@@ -653,13 +700,15 @@ impl Cli {
     }
     pub fn cli_get_web_form_split_test() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("split-test-id") . long ("split-test-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The webform split test ID"))
             .about ("Get split test for list")
     }
     pub fn cli_list_web_form_split_test_components() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("split-test-id") . long ("split-test-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The webform split test ID"))
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
@@ -668,14 +717,16 @@ impl Cli {
     }
     pub fn cli_get_web_form_split_test_component() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("split-test-component-id") . long ("split-test-component-id") . value_parser (clap::value_parser! (String)) . required (true) . help ("The webform split test component ID"))
             .arg (clap::Arg::new ("split-test-id") . long ("split-test-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The webform split test ID"))
             .about ("Get split test component")
     }
     pub fn cli_list_web_forms() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
             .arg (clap::Arg::new ("ws-start") . long ("ws-start") . value_parser (clap::value_parser! (i32)) . required (false) . help ("The pagination starting offset"))
             .arg(Self::limit_arg())
@@ -683,7 +734,8 @@ impl Cli {
     }
     pub fn cli_get_web_form() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("list-id") . long ("list-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The list ID"))
+            .args(Self::list_id_args())
+            .group(Self::list_id_group())
             .arg (clap::Arg::new ("webform-id") . long ("webform-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The webform ID"))
             .about ("Get webform for list")
     }
@@ -1040,6 +1092,36 @@ impl Cli {
     // execute_* methods - call crate::endpoints::* directly
     // -----------------------------------------------------------------------
 
+    async fn resolve_list_id(&self, matches: &clap::ArgMatches) -> anyhow::Result<i32> {
+        if let Some(&id) = matches.get_one::<i32>("list-id") {
+            return Ok(id);
+        }
+        let name = matches.get_one::<String>("list-name").unwrap();
+        let result = crate::endpoints::find_lists(
+            &self.client,
+            self.account_id,
+            Some(name),
+            None,
+            None,
+            None,
+        )
+        .await
+        .context("failed to look up list by name")?;
+        let mut matches_iter = result
+            .entries
+            .iter()
+            .filter(|l| l.name.as_deref() == Some(name));
+        let list = matches_iter
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("no list found with name '{name}'"))?;
+        if matches_iter.next().is_some() {
+            anyhow::bail!("multiple lists found with name '{name}', use --list-id instead");
+        }
+        list.id
+            .map(|id| id as i32)
+            .ok_or_else(|| anyhow::anyhow!("list '{name}' found but has no ID"))
+    }
+
     pub async fn execute_list_accounts(&self, matches: &clap::ArgMatches) -> anyhow::Result<()> {
         let ws_size = matches.get_one::<std::num::NonZeroU32>("ws-size").copied();
         let ws_start = matches.get_one::<i32>("ws-start").copied();
@@ -1187,7 +1269,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let result = crate::endpoints::get_list(&self.client, self.account_id, list_id).await;
         self.print_result(result)
     }
@@ -1196,7 +1278,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let ws_size = matches.get_one::<std::num::NonZeroU32>("ws-size").copied();
         let ws_start = matches.get_one::<i32>("ws-start").copied();
         use types::GetAccountsListsBroadcastsStatus::*;
@@ -1222,7 +1304,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let body = if let Some(path) = matches.get_one::<std::path::PathBuf>("json-body") {
             let txt = std::fs::read_to_string(path)
                 .with_context(|| format!("failed to read {}", path.display()))?;
@@ -1257,7 +1339,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let result = crate::endpoints::get_broadcast_total(
             &self.client,
             self.account_id,
@@ -1272,7 +1354,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let broadcast_id = *matches.get_one::<i32>("broadcast-id").unwrap();
         let result = crate::endpoints::get_broadcast(
             &self.client,
@@ -1288,7 +1370,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let broadcast_id = *matches.get_one::<i32>("broadcast-id").unwrap();
         let body = if let Some(path) = matches.get_one::<std::path::PathBuf>("json-body") {
             let txt = std::fs::read_to_string(path)
@@ -1326,7 +1408,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let broadcast_id = *matches.get_one::<i32>("broadcast-id").unwrap();
         let result = crate::endpoints::delete_broadcast(
             &self.client,
@@ -1342,7 +1424,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let broadcast_id = *matches.get_one::<i32>("broadcast-id").unwrap();
         let result = crate::endpoints::cancel_broadcast(
             &self.client,
@@ -1358,7 +1440,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let broadcast_id = *matches.get_one::<i32>("broadcast-id").unwrap();
         let result = crate::endpoints::get_broadcast_clicks(
             &self.client,
@@ -1378,7 +1460,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let broadcast_id = *matches.get_one::<i32>("broadcast-id").unwrap();
         let result = crate::endpoints::get_broadcast_opens(
             &self.client,
@@ -1397,7 +1479,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let broadcast_id = *matches.get_one::<i32>("broadcast-id").unwrap();
         let body = if let Some(path) = matches.get_one::<std::path::PathBuf>("json-body") {
             let txt = std::fs::read_to_string(path)
@@ -1426,7 +1508,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let broadcast_id = *matches.get_one::<i32>("broadcast-id").unwrap();
         let interval = *matches.get_one::<u64>("interval").unwrap();
 
@@ -1461,7 +1543,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let result = crate::endpoints::list_campaigns(
             &self.client,
             self.account_id,
@@ -1477,7 +1559,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let campaign_id = *matches.get_one::<i32>("campaign-id").unwrap();
         let result = crate::endpoints::list_campaign_stats(
             &self.client,
@@ -1495,7 +1577,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let campaign_id = *matches.get_one::<i32>("campaign-id").unwrap();
         let stats_id = matches
             .get_one::<types::GetAccountsListsCampaignsBcampaignidStats2StatsId>("stats-id")
@@ -1538,7 +1620,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let result = crate::endpoints::find_campaigns(
             &self.client,
             self.account_id,
@@ -1556,7 +1638,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let campaign_id = *matches.get_one::<i32>("campaign-id").unwrap();
         let campaign_type = matches
             .get_one::<types::GetAccountsListsCampaignsCampaigntypecampaignidCampaignType>(
@@ -1578,7 +1660,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let result = crate::endpoints::list_custom_fields(
             &self.client,
             self.account_id,
@@ -1594,7 +1676,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let body = if let Some(path) = matches.get_one::<std::path::PathBuf>("json-body") {
             let txt = std::fs::read_to_string(path)
                 .with_context(|| format!("failed to read {}", path.display()))?;
@@ -1620,7 +1702,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let custom_field_id = *matches.get_one::<i32>("custom-field-id").unwrap();
         let result = crate::endpoints::get_custom_field(
             &self.client,
@@ -1636,7 +1718,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let custom_field_id = *matches.get_one::<i32>("custom-field-id").unwrap();
         let result = crate::endpoints::delete_custom_field(
             &self.client,
@@ -1652,7 +1734,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let custom_field_id = *matches.get_one::<i32>("custom-field-id").unwrap();
         let body = if let Some(path) = matches.get_one::<std::path::PathBuf>("json-body") {
             let txt = std::fs::read_to_string(path)
@@ -1679,7 +1761,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let result = crate::endpoints::list_landing_pages(
             &self.client,
             self.account_id,
@@ -1695,7 +1777,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let landing_page_id = *matches.get_one::<uuid::Uuid>("landing-page-id").unwrap();
         let result = crate::endpoints::get_landing_page(
             &self.client,
@@ -1711,7 +1793,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let body = if let Some(path) = matches.get_one::<std::path::PathBuf>("json-body") {
             let txt = std::fs::read_to_string(path)
                 .with_context(|| format!("failed to read {}", path.display()))?;
@@ -1747,7 +1829,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let result = crate::endpoints::list_segments(
             &self.client,
             self.account_id,
@@ -1763,7 +1845,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let segment_id = *matches.get_one::<i32>("segment-id").unwrap();
         let result = crate::endpoints::get_segment(
             &self.client,
@@ -1779,7 +1861,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let result = crate::endpoints::list_subscribers(
             &self.client,
             self.account_id,
@@ -1796,7 +1878,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let body = if let Some(path) = matches.get_one::<std::path::PathBuf>("json-body") {
             let txt = std::fs::read_to_string(path)
                 .with_context(|| format!("failed to read {}", path.display()))?;
@@ -1835,7 +1917,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let subscriber_email = matches
             .get_one::<types::DeleteAccountsListsSubscribersSubscriberEmail>("subscriber-email")
             .unwrap();
@@ -1852,7 +1934,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let subscriber_email = matches
             .get_one::<types::PatchAccountsListsSubscribersSubscriberEmail>("subscriber-email")
             .unwrap();
@@ -1897,7 +1979,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let tags = matches.get_one::<String>("tags").map(|s| serde_json::to_string(&[s]).unwrap());
         let tags_not_in = matches.get_one::<String>("tags-not-in").map(|s| serde_json::to_string(&[s]).unwrap());
         let result = crate::endpoints::find_subscribers(
@@ -1945,7 +2027,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let subscriber_id = *matches.get_one::<i32>("subscriber-id").unwrap();
         let result = crate::endpoints::get_subscriber(
             &self.client,
@@ -1961,7 +2043,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let subscriber_id = *matches.get_one::<i32>("subscriber-id").unwrap();
         let body = if let Some(path) = matches.get_one::<std::path::PathBuf>("json-body") {
             let txt = std::fs::read_to_string(path)
@@ -1991,7 +2073,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let subscriber_id = *matches.get_one::<i32>("subscriber-id").unwrap();
         let result = crate::endpoints::delete_subscriber(
             &self.client,
@@ -2007,7 +2089,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let subscriber_id = *matches.get_one::<i32>("subscriber-id").unwrap();
         let body = if let Some(path) = matches.get_one::<std::path::PathBuf>("json-body") {
             let txt = std::fs::read_to_string(path)
@@ -2048,7 +2130,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let subscriber_id = *matches.get_one::<i32>("subscriber-id").unwrap();
         let result = crate::endpoints::get_subscriber_activity(
             &self.client,
@@ -2066,7 +2148,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let result = crate::endpoints::list_tags(
             &self.client,
             self.account_id,
@@ -2080,7 +2162,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let result = crate::endpoints::list_web_form_split_tests(
             &self.client,
             self.account_id,
@@ -2096,7 +2178,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let split_test_id = *matches.get_one::<i32>("split-test-id").unwrap();
         let result = crate::endpoints::get_web_form_split_test(
             &self.client,
@@ -2112,7 +2194,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let split_test_id = *matches.get_one::<i32>("split-test-id").unwrap();
         let result = crate::endpoints::list_web_form_split_test_components(
             &self.client,
@@ -2130,7 +2212,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let split_test_id = *matches.get_one::<i32>("split-test-id").unwrap();
         let split_test_component_id: i32 = matches
             .get_one::<String>("split-test-component-id")
@@ -2152,7 +2234,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let result = crate::endpoints::list_web_forms(
             &self.client,
             self.account_id,
@@ -2168,7 +2250,7 @@ impl Cli {
         &self,
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
-        let list_id = *matches.get_one::<i32>("list-id").unwrap();
+        let list_id = self.resolve_list_id(matches).await?;
         let webform_id = *matches.get_one::<i32>("webform-id").unwrap();
         let result = crate::endpoints::get_web_form(
             &self.client,
