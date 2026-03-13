@@ -164,6 +164,17 @@ impl Cli {
         clap::ArgGroup::new("subscriber-identifier").args(["subscriber-id", "email"]).required(true)
     }
 
+    fn custom_field_id_args() -> [clap::Arg; 2] {
+        [
+            clap::Arg::new("custom-field-id").long("custom-field-id").value_parser(clap::value_parser!(i32)).help("The custom field ID"),
+            clap::Arg::new("custom-field").long("custom-field").value_parser(clap::value_parser!(String)).help("The custom field name (looked up via the API)"),
+        ]
+    }
+
+    fn custom_field_id_group() -> clap::ArgGroup {
+        clap::ArgGroup::new("custom-field-identifier").args(["custom-field-id", "custom-field"]).required(true)
+    }
+
     pub fn cli_list_accounts() -> clap::Command {
         clap::Command::new ("")
             .arg (clap::Arg::new ("ws-size") . long ("ws-size") . value_parser (clap::value_parser! (std::num::NonZeroU32)) . required (false) . help ("The pagination total entries to retrieve"))
@@ -438,21 +449,24 @@ impl Cli {
     }
     pub fn cli_get_custom_field() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("custom-field-id") . long ("custom-field-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The custom field ID"))
+            .args(Self::custom_field_id_args())
+            .group(Self::custom_field_id_group())
             .args(Self::list_id_args())
             .group(Self::list_id_group())
             .about ("Get custom field")
     }
     pub fn cli_delete_custom_field() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("custom-field-id") . long ("custom-field-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The custom field ID"))
+            .args(Self::custom_field_id_args())
+            .group(Self::custom_field_id_group())
             .args(Self::list_id_args())
             .group(Self::list_id_group())
             .about ("Delete custom field")
     }
     pub fn cli_update_custom_field() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("custom-field-id") . long ("custom-field-id") . value_parser (clap::value_parser! (i32)) . required (true) . help ("The custom field ID"))
+            .args(Self::custom_field_id_args())
+            .group(Self::custom_field_id_group())
             .arg (clap::Arg::new ("is-subscriber-updateable") . long ("is-subscriber-updateable") . value_parser (clap::value_parser! (bool)) . required (false) . help ("Whether the subscriber is allowed to update the custom field"))
             .args(Self::list_id_args())
             .group(Self::list_id_group())
@@ -1178,6 +1192,42 @@ impl Cli {
             .ok_or_else(|| anyhow::anyhow!("subscriber '{email}' found but has no ID"))
     }
 
+    async fn resolve_custom_field_id(
+        &self,
+        matches: &clap::ArgMatches,
+        list_id: i32,
+    ) -> anyhow::Result<i32> {
+        if let Some(&id) = matches.get_one::<i32>("custom-field-id") {
+            return Ok(id);
+        }
+        let name = matches.get_one::<String>("custom-field").unwrap();
+        let result = crate::endpoints::list_custom_fields(
+            &self.client,
+            self.account_id,
+            list_id,
+            None,
+            None,
+        )
+        .await
+        .context("failed to look up custom field by name")?;
+        let mut matches_iter = result
+            .entries
+            .iter()
+            .filter(|cf| cf.name.as_ref() == Some(name));
+        let field = matches_iter
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("no custom field found with name '{name}'"))?;
+        if matches_iter.next().is_some() {
+            anyhow::bail!(
+                "multiple custom fields found with name '{name}', use --custom-field-id instead"
+            );
+        }
+        field
+            .id
+            .map(|id| id as i32)
+            .ok_or_else(|| anyhow::anyhow!("custom field '{name}' found but has no ID"))
+    }
+
     pub async fn execute_list_accounts(&self, matches: &clap::ArgMatches) -> anyhow::Result<()> {
         let ws_size = matches.get_one::<std::num::NonZeroU32>("ws-size").copied();
         let ws_start = matches.get_one::<i32>("ws-start").copied();
@@ -1759,7 +1809,7 @@ impl Cli {
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
         let list_id = self.resolve_list_id(matches).await?;
-        let custom_field_id = *matches.get_one::<i32>("custom-field-id").unwrap();
+        let custom_field_id = self.resolve_custom_field_id(matches, list_id).await?;
         let result = crate::endpoints::get_custom_field(
             &self.client,
             self.account_id,
@@ -1775,7 +1825,7 @@ impl Cli {
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
         let list_id = self.resolve_list_id(matches).await?;
-        let custom_field_id = *matches.get_one::<i32>("custom-field-id").unwrap();
+        let custom_field_id = self.resolve_custom_field_id(matches, list_id).await?;
         let result = crate::endpoints::delete_custom_field(
             &self.client,
             self.account_id,
@@ -1791,7 +1841,7 @@ impl Cli {
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
         let list_id = self.resolve_list_id(matches).await?;
-        let custom_field_id = *matches.get_one::<i32>("custom-field-id").unwrap();
+        let custom_field_id = self.resolve_custom_field_id(matches, list_id).await?;
         let body = if let Some(path) = matches.get_one::<std::path::PathBuf>("json-body") {
             let txt = std::fs::read_to_string(path)
                 .with_context(|| format!("failed to read {}", path.display()))?;
