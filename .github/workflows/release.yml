@@ -5,7 +5,38 @@ on:
     tags: ["v*"]
 
 jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Get tag annotation
+        id: tag-msg
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          ref_json=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${TAG}")
+          tag_sha=$(echo "$ref_json" | jq -r '.object.sha')
+          tag_msg=$(gh api "repos/${GITHUB_REPOSITORY}/git/tags/${tag_sha}" --jq '.message')
+          echo "msg<<TAGEOF" >> "$GITHUB_OUTPUT"
+          echo "$tag_msg" >> "$GITHUB_OUTPUT"
+          echo "TAGEOF" >> "$GITHUB_OUTPUT"
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          TAG_MSG: ${{ steps.tag-msg.outputs.msg }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/releases" \
+            -f tag_name="$TAG" \
+            -f name="$TAG" \
+            -f body="$TAG_MSG" \
+            -F draft=true \
+            -F prerelease=false
+
   build:
+    needs: create-release
     strategy:
       matrix:
         include:
@@ -24,6 +55,8 @@ jobs:
           - target: x86_64-pc-windows-msvc
             os: windows-latest
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -58,24 +91,21 @@ jobs:
       - name: Package (windows)
         if: matrix.os == 'windows-latest'
         run: Compress-Archive -Path target/${{ matrix.target }}/release/aweber.exe -DestinationPath aweber-${{ matrix.target }}.zip
-      - uses: actions/upload-artifact@v4
-        with:
-          name: aweber-${{ matrix.target }}
-          path: |
-            aweber-*.tar.gz
-            aweber-*.zip
+      - name: Upload artifact to release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: gh release upload "$TAG" aweber-*.tar.gz aweber-*.zip 2>/dev/null || gh release upload "$TAG" aweber-*.zip 2>/dev/null || gh release upload "$TAG" aweber-*.tar.gz
 
-  release:
+  publish-release:
     needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          merge-multiple: true
-      - name: Create release
+      - name: Mark release as latest
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --notes-from-tag aweber-*.tar.gz aweber-*.zip
+        run: gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false --latest=false
