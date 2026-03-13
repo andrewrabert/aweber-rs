@@ -771,7 +771,6 @@ impl Cli {
     }
     pub fn cli_get_broadcast_link_analytics() -> clap::Command {
         clap::Command::new ("")
-            .arg (clap::Arg::new ("account-id") . long ("account-id") . value_parser (clap::value_parser! (types :: GetBroadcastLinksAnalyticsAccountId)) . required (true) . help ("Account UUID. Can be found using the [Get accounts](#tag/Accounts/paths/~1accounts/get) endpoint."))
             .arg (clap::Arg::new ("after") . long ("after") . value_parser (clap::value_parser! (String)) . required (false) . help ("specifies the IDs for pagination, for results from after onward"))
             .arg (clap::Arg::new ("before") . long ("before") . value_parser (clap::value_parser! (i64)) . required (false) . help ("specifies the IDs for pagination, for results from before onward"))
             .arg (clap::Arg::new ("broadcast-id") . long ("broadcast-id") . value_parser (clap::value_parser! (types :: GetBroadcastLinksAnalyticsBroadcastId)) . required (true) . help ("Broadcast UUID. Can be found using the [Get broadcasts](#tag/Broadcasts/paths/~1accounts~1{accountId}~1lists~1{listId}~1broadcasts/get) endpoint."))
@@ -2377,10 +2376,7 @@ impl Cli {
         matches: &clap::ArgMatches,
     ) -> anyhow::Result<()> {
         // Convert from the rich wrapper types to the simpler endpoint types.
-        let account_id = matches
-            .get_one::<types::GetBroadcastLinksAnalyticsAccountId>("account-id")
-            .and_then(|v| v.parse::<i32>().ok())
-            .expect("--account-id is required");
+        let account_id = self.account_id;
         let after = matches.get_one::<String>("after").map(|s| s.as_str());
         let before_str = matches.get_one::<i64>("before").map(|v| v.to_string());
         let broadcast_id = matches
